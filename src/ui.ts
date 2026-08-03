@@ -4,6 +4,80 @@
 import type { KAPLAYCtx } from "kaplay";
 import { MODAL_CONTENT, TRIGGER_DIALOGUE } from "./content";
 
+// ── Retro Web Audio SFX Synthesizer ─────────────────────────────
+
+let audioCtx: AudioContext | null = null;
+let isMuted = false;
+
+function getAudioContext(): AudioContext | null {
+  if (isMuted) return null;
+  if (!audioCtx && typeof window !== "undefined") {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+    }
+  }
+  if (audioCtx && audioCtx.state === "suspended") {
+    audioCtx.resume().catch(() => {});
+  }
+  return audioCtx;
+}
+
+export function playTypewriterBlip(): void {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "square";
+    osc.frequency.setValueAtTime(480 + Math.random() * 60, ctx.currentTime);
+    gain.gain.setValueAtTime(0.015, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.03);
+  } catch {}
+}
+
+export function playModalOpenSFX(): void {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.12);
+  } catch {}
+}
+
+export function playTeleportSFX(): void {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(320, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(880, ctx.currentTime + 0.18);
+    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.22);
+  } catch {}
+}
+
 // ── Dialogue Box ──────────────────────────────────────────────
 
 let dialogueTyping = false;
@@ -27,6 +101,7 @@ export function showDialogue(key: string, done?: () => void): void {
   dialogueInterval = setInterval(() => {
     if (i < text.length) {
       para.textContent += text[i++];
+      if (i % 2 === 0) playTypewriterBlip();
     } else {
       clearInterval(dialogueInterval!);
       dialogueInterval = null;
@@ -81,6 +156,7 @@ export function openProjectModal(triggerName: string): void {
     .map(t => `<span class="tag">${t}</span>`)
     .join("");
 
+  playModalOpenSFX();
   modal.classList.remove("hidden");
 }
 
@@ -96,7 +172,10 @@ export function initPokedex(teleportFn: (zone: string) => void): void {
   const closeBtn = document.getElementById("pokedex-close")!;
   const items    = document.querySelectorAll<HTMLElement>(".pokedex-item");
 
-  const open  = () => modal.classList.remove("hidden");
+  const open  = () => {
+    playModalOpenSFX();
+    modal.classList.remove("hidden");
+  };
   const close = () => modal.classList.add("hidden");
 
   openBtn.addEventListener("click", open);
@@ -107,6 +186,7 @@ export function initPokedex(teleportFn: (zone: string) => void): void {
     item.addEventListener("click", () => {
       const zone = item.dataset.zone!;
       close();
+      playTeleportSFX();
       teleportFn(zone);
     });
   });
@@ -138,19 +218,19 @@ export function initProjectModal(): void {
 
 export function initAudioToggle(k: KAPLAYCtx): void {
   const btn  = document.getElementById("audio-btn")!;
-  let muted  = false;
 
   btn.addEventListener("click", () => {
-    muted = !muted;
-    k.volume(muted ? 0 : 1);
-    btn.textContent = muted ? "🔇 MUTED" : "🔊";
-    btn.setAttribute("aria-label", muted ? "Unmute audio" : "Mute audio");
+    isMuted = !isMuted;
+    k.volume(isMuted ? 0 : 1);
+    btn.textContent = isMuted ? "🔇 MUTED" : "🔊";
+    btn.setAttribute("aria-label", isMuted ? "Unmute audio" : "Mute audio");
   });
 }
 
 // ── Resume Download ───────────────────────────────────────────
 
 export function triggerResumeDownload(): void {
+  playModalOpenSFX();
   const a = document.createElement("a");
   a.href     = "/assets/resume/upanshu-pandey-cv.pdf";
   a.download = "Upanshu-Pandey-CV.pdf";
@@ -194,3 +274,4 @@ export function setupEventBridge(): void {
     }
   });
 }
+

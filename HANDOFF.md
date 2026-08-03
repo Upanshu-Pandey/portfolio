@@ -161,24 +161,12 @@ portfolio/
   - Dirt path network, trees with multi-layer canopy, world border collision walls
 - [x] **Fixed KAPLAY font rendering issue on signs (removed broken font property)**
 - [x] **Installed system clipboard tools (`wl-clipboard` & `xclip`)**
+- [x] **Phase 3 Assets & Resume**: Placed CV PDF (`public/assets/resume/upanshu-pandey-cv.pdf`) and wired resume download trigger.
+- [x] **Phase 3 Audio Integration**: Built retro Web Audio SFX synth system for typewriter blips, modal open chimes, teleport SFX, and audio mute toggle state in `src/ui.ts`.
 
 ---
 
 ## 🔜 What's NOT Done (Next Steps in Order)
-
-### Phase 3 — Assets & Resume (Next Steps)
-
-#### Step 1: Add the resume PDF
-- Copy Upanshu's CV file to: `public/assets/resume/upanshu-pandey-cv.pdf`
-- Verify the resume download sign triggers the PDF download cleanly.
-
-#### Step 2: Audio Integration (Optional / Nice-to-have)
-- **BGM:** https://www.beepbox.co/ — compose a short looping chiptune (~30s)
-- **SFX:** https://www.sfbgames.com/chiptone/ — generate: door open, dialogue ping, teleport
-- Save files to `public/assets/audio/`
-- Wire up `k.loadSound(...)` and play logic in `src/main.ts`
-
----
 
 ### Phase 4 — Testing & Polish
 
@@ -188,12 +176,17 @@ portfolio/
 - [ ] Test mobile controls (< 768px) with NippleJS virtual joystick
 - [ ] Test ESC key shortcut (toggles Pokédex / closes open modals)
 
+- [x] **Phase 5 Production CI/CD**: Created `vite.config.ts` (relative base path) and `.github/workflows/deploy.yml` for automated GitHub Pages build & deployment upon git push.
+
 ---
+
 
 ### Phase 5 — Production Deployment
 
-- Run `npm run build` — outputs production bundle to `dist/`
-- Deploy to **Vercel** (`npx vercel --prod`), Netlify, or GitHub Pages
+- [x] Configured GitHub Actions CI/CD (`.github/workflows/deploy.yml`)
+- [x] Configured Vite base path (`vite.config.ts`)
+- [ ] Push latest changes to `origin/master` to trigger automated deployment to GitHub Pages (`https://Upanshu-Pandey.github.io/portfolio/`).
+
 
 ---
 
