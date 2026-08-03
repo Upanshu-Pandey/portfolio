@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Upanshu Pandey — ERP Consultant & Full-Stack Developer. An interactive 2D RPG portfolio built with KAPLAY.js. Explore my projects, skills, and resume in a Pokémon-style world." />
+    <title>Upanshu Pandey | Interactive Portfolio</title>
+
+    <!-- Retro Pixel Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <!-- NES.css retro UI framework -->
+    <link href="https://unpkg.com/nes.css/css/nes.min.css" rel="stylesheet" />
+  </head>
+  <body>
+
+    <!-- ═══════════════════════════════════════════
+         GAME CONTAINER — Canvas + DOM overlay stack
+         ═══════════════════════════════════════════ -->
+    <div id="game-container">
+
+      <!-- KAPLAY renders its canvas here -->
+      <canvas id="kaplay-canvas"></canvas>
+
+      <!-- ─── UI LAYER (sits over the canvas) ─── -->
+      <div id="ui-layer">
+
+        <!-- Top-left: Audio toggle -->
+        <button id="audio-btn" class="corner-btn corner-btn--left" aria-label="Mute audio" title="Toggle Sound">🔊</button>
+
+        <!-- Top-right: Pokédex / fast-travel -->
+        <button id="pokedex-btn" class="corner-btn corner-btn--right" aria-label="Open Pokédex menu">
+          📱 POKÉDEX
+        </button>
+
+        <!-- ─── Typewriter Dialogue Box ─── -->
+        <div id="dialogue-box" class="hidden" role="status" aria-live="polite">
+          <div id="dialogue-inner">
+            <p id="dialogue-text"></p>
+            <span class="prompt-arrow" aria-hidden="true">▼</span>
+          </div>
+        </div>
+
+        <!-- ─── Project / Zone Modal ─── -->
+        <div id="project-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+          <div class="modal-backdrop"></div>
+          <div class="modal-content nes-container is-rounded">
+            <button id="modal-close" class="nes-btn is-error modal-close-btn" aria-label="Close modal">✕</button>
+            <div class="modal-zone-tag" id="modal-zone-tag"></div>
+            <h2 id="modal-title" class="modal-title"></h2>
+            <div id="modal-body" class="modal-body"></div>
+            <div id="modal-tags" class="modal-tags"></div>
+          </div>
+        </div>
+
+        <!-- ─── Pokédex Fast-Travel Modal ─── -->
+        <div id="pokedex-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="pokedex-heading">
+          <div class="modal-backdrop"></div>
+          <div class="pokedex-content">
+            <div class="pokedex-screen">
+              <h2 id="pokedex-heading" class="pokedex-title">POKÉDEX</h2>
+              <p class="pokedex-subtitle">— Fast Travel —</p>
+              <ul id="pokedex-list" class="pokedex-list">
+                <li class="pokedex-item" data-zone="town-square">
+                  <span class="zone-icon">🏘️</span>
+                  <div>
+                    <div class="zone-name">Town Square</div>
+                    <div class="zone-sub">Spawn · Welcome</div>
+                  </div>
+                </li>
+                <li class="pokedex-item" data-zone="gym-frontend">
+                  <span class="zone-icon">🏋️</span>
+                  <div>
+                    <div class="zone-name">Gym 1 — Frontend City</div>
+                    <div class="zone-sub">Web & Full-Stack Projects</div>
+                  </div>
+                </li>
+                <li class="pokedex-item" data-zone="gym-systems">
+                  <span class="zone-icon">⚡</span>
+                  <div>
+                    <div class="zone-name">Gym 2 — Systems Hub</div>
+                    <div class="zone-sub">ERP · Backend · Data</div>
+                  </div>
+                </li>
+                <li class="pokedex-item" data-zone="lab-about">
+                  <span class="zone-icon">🔬</span>
+                  <div>
+                    <div class="zone-name">Professor's Lab</div>
+                    <div class="zone-sub">About · Skills · Resume</div>
+                  </div>
+                </li>
+              </ul>
+              <button id="pokedex-close" class="nes-btn is-error pokedex-close-btn">Close  [ESC]</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Mobile Joystick Zone ─── -->
+        <div id="joystick-zone" aria-hidden="true"></div>
+
+        <!-- ─── Loading Screen ─── -->
+        <div id="loading-screen">
+          <div class="loading-inner">
+            <div class="loading-title">UPANSHU PANDEY</div>
+            <div class="loading-sub">ERP Consultant · Full-Stack Developer</div>
+            <div class="loading-bar-wrap">
+              <progress class="nes-progress is-primary" id="loading-bar" value="0" max="100"></progress>
+            </div>
+            <div class="loading-hint">Loading world...</div>
+          </div>
+        </div>
+
+      </div><!-- /#ui-layer -->
+    </div><!-- /#game-container -->
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
