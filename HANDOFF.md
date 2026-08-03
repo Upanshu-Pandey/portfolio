@@ -153,12 +153,17 @@ portfolio/
 - [x] Dev server running at http://localhost:5173/
 - [x] **Generated 4x4 player walk-cycle spritesheet with pure RGBA transparency (`public/assets/sprites/player.png`)**
 - [x] **Created sharp node script (`scripts/process-sprite.mjs`) for chromakey pixel manipulation**
-- [x] **Replaced placeholder rects with a full custom programmatic pixel-art RPG world in `src/main.ts`**
-  - Town Square with stone plaza, fountain with water shimmer, welcome sign & NPC guide
-  - Gym 1 (Frontend City) with 2 buildings (.NET+React, Quantum RL Lab)
-  - Gym 2 (Systems Hub) with 3 industrial buildings (BC ERP, ClickHouse, DB Infra)
-  - Professor's Lab with wood flooring, large lab building, 5 outdoor signs
-  - Dirt path network, trees with multi-layer canopy, world border collision walls
+- [x] **Phase 4 Visual Overhaul (Pokémon GBA Style)**:
+  - Upgraded raw shape primitives to high-quality GBA Pokémon style 16-bit pixel art sprite assets:
+    - `npc_guide.png`: Pokemon professor guide sprite with animated overhead indicator (`?`).
+    - `fountain.png`: Detailed GBA plaza stone fountain sprite with water shimmer effect.
+    - `tree_oak.png`: Pokémon GBA style oak trees with soft base shadows & trunk depth colliders.
+    - `prof_lab.png`: Professor Oak style Laboratory building sprite.
+    - `gym_frontend.png`: Futuristic Electric/Gold Gym building sprite.
+    - `gym_systems.png`: Industrial Metallic/Rust Gym building sprite.
+    - `signpost.png`: Retro wooden notice board signposts.
+  - Enhanced ground layer with vibrant multi-shaded green grass tufts, sand paths with cobblestone borders, stone plaza paving, and hardwood lab decking in `src/main.ts`.
+  - Built `scripts/process-assets.mjs` using `sharp` to process chromakey transparency and trim sprite padding.
 - [x] **Fixed KAPLAY font rendering issue on signs (removed broken font property)**
 - [x] **Installed system clipboard tools (`wl-clipboard` & `xclip`)**
 - [x] **Phase 3 Assets & Resume**: Placed CV PDF (`public/assets/resume/upanshu-pandey-cv.pdf`) and wired resume download trigger.

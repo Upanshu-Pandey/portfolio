@@ -31,16 +31,15 @@ export function spawnPlayer(k: KAPLAYCtx, spawnX: number, spawnY: number): GameO
   // The sprite is 1024×1024 for a 4×4 grid → each frame is 256×256 px
   // We scale it down to 16px wide at game resolution via the scale component
   const FRAME_PX = 256; // actual pixels per frame in the PNG
-  const TARGET_PX = 16; // desired on-screen size (in KAPLAY game units)
+  const TARGET_PX = 28; // desired on-screen size (aligned with 2D RPG world)
   const S = TARGET_PX / FRAME_PX;
 
   const player = k.add([
     k.sprite("player", { anim: "idle-down" }),
     k.pos(spawnX, spawnY),
     k.scale(S),
-    // Feet-only hitbox for natural depth illusion
-    // In game units after scaling: 12×6 box at bottom of sprite
-    k.area({ shape: new k.Rect(k.vec2(-6, 4), 12, 6) }),
+    // Feet-only hitbox in 256×256 sprite space: 100×45 box positioned at boots
+    k.area({ shape: new k.Rect(k.vec2(-50, 60), 100, 45) }),
     k.body(),
     k.anchor("center"),
     k.z(10),

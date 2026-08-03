@@ -24,7 +24,7 @@ const k = kaplay({
   height:     270,
   scale:      2,
   letterbox:  true,
-  background: [34, 85, 34],
+  background: [34, 110, 34],
   crisp:      true,
 });
 
@@ -47,8 +47,9 @@ k.onLoad(() => {
   }, 300);
 });
 
-// ── Player sprite (4×4 spritesheet: 4 cols × 4 rows) ─────────
-// Source image is 1024×1024 → each frame is 256×256
+// ── Asset Loading ─────────────────────────────────────────────
+
+// Player sprite (4×4 spritesheet)
 k.loadSprite("player", "/assets/sprites/player.png", {
   sliceX: 4,
   sliceY: 4,
@@ -64,29 +65,36 @@ k.loadSprite("player", "/assets/sprites/player.png", {
   },
 });
 
+// Pokemon style GBA Environment Sprites
+k.loadSprite("tree_oak",     "/assets/sprites/tree_oak.png");
+k.loadSprite("npc_guide",    "/assets/sprites/npc_guide.png");
+k.loadSprite("prof_lab",     "/assets/sprites/prof_lab.png");
+k.loadSprite("gym_frontend", "/assets/sprites/gym_frontend.png");
+k.loadSprite("gym_systems",  "/assets/sprites/gym_systems.png");
+k.loadSprite("fountain",     "/assets/sprites/fountain.png");
+k.loadSprite("signpost",     "/assets/sprites/signpost.png");
+
 // ── Game Scene ────────────────────────────────────────────────
 k.scene("game", () => {
 
   // ══════════════════════════════════════════════════════════════
-  //  PROGRAMMATIC PIXEL-ART MAP
-  //  World size: 960 × 800 (60 × 50 tiles at 16px each)
+  //  WORLD DIMENSIONS (960 × 800)
   // ══════════════════════════════════════════════════════════════
-
   const W  = 960;
   const H  = 800;
-  const TS = 16; // tile size
+  const TS = 16;
 
   // ── Helper: draw a solid rect tile ──────────────────────────
   function tile(x: number, y: number, w: number, h: number, color: ReturnType<typeof k.rgb>, z = 0) {
     return k.add([k.rect(w, h), k.pos(x, y), k.color(color), k.z(z)]);
   }
 
-  // ── Helper: draw a text label ───────────────────────────────
-  function label(x: number, y: number, text: string, size = 5, z = 5) {
-    k.add([k.text(text, { size }), k.pos(x, y), k.color(255, 255, 255), k.z(z)]);
+  // ── Helper: draw text label ──────────────────────────────────
+  function label(x: number, y: number, text: string, size = 5, z = 5, col = [255, 255, 255]) {
+    k.add([k.text(text, { size }), k.pos(x, y), k.color(col[0]!, col[1]!, col[2]!), k.z(z)]);
   }
 
-  // ── Helper: solid wall block ────────────────────────────────
+  // ── Helper: solid wall collider ─────────────────────────────
   function wall(x: number, y: number, w: number, h: number) {
     k.add([
       k.rect(w, h),
@@ -99,348 +107,410 @@ k.scene("game", () => {
   }
 
   // ══════════════════════════════════════════════════════════════
-  //  GROUND LAYER — fill entire world with grass
+  //  GROUND LAYER — Vibrant Pokemon GBA Grass
   // ══════════════════════════════════════════════════════════════
-  tile(0, 0, W, H, k.rgb(34, 102, 34), -2);
+  tile(0, 0, W, H, k.rgb(45, 125, 45), -2);
 
-  // Grass texture — light dots in a grid pattern
+  // Checkerboard & tuft grass detailing
   for (let gx = 0; gx < W; gx += TS * 2) {
     for (let gy = 0; gy < H; gy += TS * 2) {
-      tile(gx + 2,  gy + 2,  2, 2, k.rgb(42, 115, 42), -1);
-      tile(gx + 10, gy + 10, 2, 2, k.rgb(28, 92, 28),  -1);
+      tile(gx, gy, TS, TS, k.rgb(40, 118, 40), -2);
+      tile(gx + 4, gy + 4, 3, 4, k.rgb(60, 150, 50), -1);
+      tile(gx + 20, gy + 18, 4, 3, k.rgb(32, 95, 32), -1);
     }
   }
 
   // ══════════════════════════════════════════════════════════════
-  //  PATHS — cross-shaped dirt road network
+  //  PATHS — Sandy dirt paths with cobblestone edges
   // ══════════════════════════════════════════════════════════════
-  const PATH_COLOR  = k.rgb(180, 140, 90);
-  const PEBBLE_COLOR = k.rgb(165, 128, 80);
+  const PATH_COLOR   = k.rgb(210, 170, 110);
+  const EDGE_COLOR   = k.rgb(170, 130, 85);
+  const PEBBLE_COLOR = k.rgb(150, 115, 70);
 
-  // Horizontal main path (center Y ≈ 400)
-  tile(0,   385, W, 30, PATH_COLOR, 0);
-  // Vertical main path (center X ≈ 480)
-  tile(460, 0,   30, H, PATH_COLOR, 0);
+  // Main paths
+  tile(0, 380, W, 40, PATH_COLOR, 0);   // Horizontal main road
+  tile(450, 0, 40, H, PATH_COLOR, 0);   // Vertical main road
 
-  // Path pebble detail
-  for (let px = 4; px < W; px += 32) {
-    tile(px, 390, 4, 4, PEBBLE_COLOR, 1);
-    tile(px + 16, 398, 3, 3, PEBBLE_COLOR, 1);
+  // Road edges
+  tile(0, 377, W, 3, EDGE_COLOR, 1);
+  tile(0, 420, W, 3, EDGE_COLOR, 1);
+  tile(447, 0, 3, H, EDGE_COLOR, 1);
+  tile(490, 0, 3, H, EDGE_COLOR, 1);
+
+  // Pebbles along paths
+  for (let px = 8; px < W; px += 28) {
+    tile(px, 386, 3, 3, PEBBLE_COLOR, 1);
+    tile(px + 12, 408, 4, 3, PEBBLE_COLOR, 1);
   }
-  for (let py = 4; py < H; py += 32) {
-    tile(465, py, 4, 4, PEBBLE_COLOR, 1);
-    tile(474, py + 16, 3, 3, PEBBLE_COLOR, 1);
+  for (let py = 8; py < H; py += 28) {
+    tile(456, py, 3, 3, PEBBLE_COLOR, 1);
+    tile(478, py + 14, 4, 3, PEBBLE_COLOR, 1);
   }
 
   // ══════════════════════════════════════════════════════════════
-  //  TOWN SQUARE — center of the map (around 400, 340)
+  //  TOWN SQUARE — Center Plaza with Ornate Fountain & NPC Guide
   // ══════════════════════════════════════════════════════════════
-  const TS_X = 340, TS_Y = 310, TS_W = 200, TS_H = 120;
+  const TS_X = 330, TS_Y = 290, TS_W = 220, TS_H = 150;
 
-  // Stone plaza base
-  tile(TS_X, TS_Y, TS_W, TS_H, k.rgb(170, 160, 145), 1);
-  // Plaza border
-  tile(TS_X,              TS_Y,             TS_W, 4,  k.rgb(130, 120, 105), 2);
-  tile(TS_X,              TS_Y + TS_H - 4,  TS_W, 4,  k.rgb(130, 120, 105), 2);
-  tile(TS_X,              TS_Y,             4,  TS_H,  k.rgb(130, 120, 105), 2);
-  tile(TS_X + TS_W - 4,   TS_Y,             4,  TS_H,  k.rgb(130, 120, 105), 2);
+  // Stone Plaza Paving
+  tile(TS_X, TS_Y, TS_W, TS_H, k.rgb(190, 180, 160), 1);
+  // Plaza border bricks
+  tile(TS_X - 4, TS_Y - 4, TS_W + 8, 5, k.rgb(140, 125, 100), 2);
+  tile(TS_X - 4, TS_Y + TS_H - 1, TS_W + 8, 5, k.rgb(140, 125, 100), 2);
+  tile(TS_X - 4, TS_Y - 4, 5, TS_H + 8, k.rgb(140, 125, 100), 2);
+  tile(TS_X + TS_W - 1, TS_Y - 4, 5, TS_H + 8, k.rgb(140, 125, 100), 2);
 
-  // Center fountain
-  tile(415, 345, 50, 40, k.rgb(100, 150, 200), 2); // water
-  tile(420, 350, 40, 30, k.rgb(120, 175, 220), 2); // water shimmer
-  tile(430, 355, 20, 20, k.rgb(140, 195, 235), 2);
-  // Fountain border
-  tile(413, 343, 54, 3, k.rgb(160, 140, 120), 3);
-  tile(413, 380, 54, 3, k.rgb(160, 140, 120), 3);
-  tile(413, 343, 3, 40, k.rgb(160, 140, 120), 3);
-  tile(464, 343, 3, 40, k.rgb(160, 140, 120), 3);
+  // Decorative inner plaza grid lines
+  for (let px = TS_X; px < TS_X + TS_W; px += 20) {
+    tile(px, TS_Y, 1, TS_H, k.rgb(175, 165, 145), 1);
+  }
+  for (let py = TS_Y; py < TS_Y + TS_H; py += 20) {
+    tile(TS_X, py, TS_W, 1, k.rgb(175, 165, 145), 1);
+  }
 
-  // Welcome sign (trigger visual)
-  tile(348, 330, 24, 18, k.rgb(80, 55, 30), 3);   // post dark
-  tile(350, 314, 60, 14, k.rgb(120, 85, 40), 3);   // sign board
-  tile(352, 316, 56, 10, k.rgb(200, 170, 100), 3); // sign face
-  label(353, 317, "WELCOME!", 4, 4);
+  // Town Square Header Tag
+  tile(TS_X + 45, TS_Y + 6, 130, 14, k.rgb(60, 40, 20), 4);
+  tile(TS_X + 47, TS_Y + 8, 126, 10, k.rgb(230, 190, 110), 4);
+  label(TS_X + 52, TS_Y + 10, "★ TOWN SQUARE ★", 4, 5, [60, 40, 20]);
 
-  // NPC guide — small pixel figure
-  tile(362, 350, 8, 12, k.rgb(255, 200, 150), 3); // head+body
-  tile(360, 356, 12, 6, k.rgb(50, 100, 200), 3);  // shirt
-  tile(362, 362, 3, 4, k.rgb(50, 50, 100), 3);    // leg L
-  tile(367, 362, 3, 4, k.rgb(50, 50, 100), 3);    // leg R
-  label(355, 342, "?", 8, 4);
+  // Center Ornate Pokemon Fountain Sprite
+  // fountain.png original: 922×927 -> Scale 0.075 => ~69×69 px
+  k.add([
+    k.sprite("fountain"),
+    k.pos(440, 365),
+    k.anchor("center"),
+    k.scale(0.075),
+    k.z(3),
+  ]);
 
-  // Flowers around plaza
-  const FLOWER_POSITIONS = [
-    [TS_X + 8, TS_Y + 8], [TS_X + 180, TS_Y + 8],
-    [TS_X + 8, TS_Y + 100], [TS_X + 180, TS_Y + 100],
-  ];
-  FLOWER_POSITIONS.forEach(([fx, fy]) => {
-    tile(fx!, fy!, 6, 6, k.rgb(0, 160, 0), 2);
-    tile(fx! + 1, fy! - 2, 4, 4, k.rgb(255, 80, 120), 3);
+  // Water shimmer effect over fountain
+  k.add([
+    k.rect(34, 34),
+    k.pos(440, 365),
+    k.anchor("center"),
+    k.color(100, 200, 255),
+    k.opacity(0.25),
+    k.z(4),
+  ]);
+
+  // Octagon polygon collider for smooth circular fountain collisions (KAPLAY supports polygon and rect)
+  const fr = 24;
+  const fc = 17; // 24 * cos(45 deg)
+  k.add([
+    k.pos(440, 365),
+    k.area({
+      shape: new k.Polygon([
+        k.vec2(fr, 0),
+        k.vec2(fc, fc),
+        k.vec2(0, fr),
+        k.vec2(-fc, fc),
+        k.vec2(-fr, 0),
+        k.vec2(-fc, -fc),
+        k.vec2(0, -fr),
+        k.vec2(fc, -fc),
+      ]),
+    }),
+    k.body({ isStatic: true }),
+    "solid",
+  ]);
+
+  // Welcome Signpost Prop
+  // signpost.png: 813×502 -> Scale 0.045 => ~36×22 px
+  k.add([
+    k.sprite("signpost"),
+    k.pos(355, 330),
+    k.scale(0.045),
+    k.anchor("center"),
+    k.z(3),
+  ]);
+  tile(338, 312, 60, 12, k.rgb(70, 45, 20), 4);
+  tile(340, 314, 56, 8, k.rgb(240, 200, 120), 4);
+  label(344, 316, "WELCOME!", 4, 5, [70, 45, 20]);
+
+  // Pokemon Professor NPC Guide Sprite
+  // npc_guide.png: 512×830 -> Scale 0.035 => ~18×29 px
+  k.add([
+    k.sprite("npc_guide"),
+    k.pos(365, 365),
+    k.anchor("center"),
+    k.scale(0.035),
+    k.z(4),
+  ]);
+  // NPC solid collision
+  wall(356, 355, 18, 20);
+
+  // Animated prompt indicator overhead NPC
+  const npcPrompt = k.add([
+    k.text("?", { size: 9 }),
+    k.pos(365, 342),
+    k.anchor("center"),
+    k.color(255, 220, 50),
+    k.z(5),
+  ]);
+  let promptTimer = 0;
+  k.onUpdate(() => {
+    promptTimer += k.dt() * 4;
+    npcPrompt.pos.y = 342 + Math.sin(promptTimer) * 2;
   });
 
-  label(370, TS_Y + 6, "★ TOWN SQUARE", 5, 4);
+  // Flower Beds in Town Square corners
+  const FLOWERS = [
+    [TS_X + 12, TS_Y + 20],  [TS_X + 26, TS_Y + 20],
+    [TS_X + 180, TS_Y + 20], [TS_X + 194, TS_Y + 20],
+    [TS_X + 12, TS_Y + 125], [TS_X + 26, TS_Y + 125],
+    [TS_X + 180, TS_Y + 125],[TS_X + 194, TS_Y + 125],
+  ];
+  FLOWERS.forEach(([fx, fy], idx) => {
+    tile(fx!, fy!, 8, 8, k.rgb(35, 110, 35), 2);
+    const flowerCol = idx % 2 === 0 ? k.rgb(255, 90, 140) : k.rgb(255, 220, 60);
+    tile(fx! + 2, fy! + 2, 4, 4, flowerCol, 3);
+  });
 
   // ══════════════════════════════════════════════════════════════
   //  GYM 1 — FRONTEND CITY (top-right quadrant)
   // ══════════════════════════════════════════════════════════════
-  const G1_X = 560, G1_Y = 60;
+  const G1_X = 570, G1_Y = 50;
 
-  // Zone ground (cobblestone)
-  tile(G1_X, G1_Y, 300, 260, k.rgb(90, 100, 120), 1);
-  for (let cx = G1_X; cx < G1_X + 300; cx += 20) {
-    for (let cy = G1_Y; cy < G1_Y + 260; cy += 20) {
-      tile(cx, cy, 19, 19, k.rgb(80, 90, 110), 1);
+  // Courtyard Cobblestone Base
+  tile(G1_X, G1_Y, 320, 280, k.rgb(105, 115, 135), 1);
+  for (let cx = G1_X; cx < G1_X + 320; cx += 16) {
+    for (let cy = G1_Y; cy < G1_Y + 280; cy += 16) {
+      tile(cx, cy, 15, 15, k.rgb(95, 105, 125), 1);
     }
   }
 
-  // Gym 1 building — large blue structure
+  // Zone Header Sign
+  tile(G1_X + 10, G1_Y + 10, 110, 16, k.rgb(20, 40, 90), 4);
+  tile(G1_X + 12, G1_Y + 12, 106, 12, k.rgb(50, 120, 220), 4);
+  label(G1_X + 16, G1_Y + 16, "⚡ FRONTEND CITY", 4, 5, [255, 255, 255]);
+
+  // Building 1 — Frontend .NET + React Gym Sprite
+  // gym_frontend.png: 880×916 -> Scale 0.12 => ~105×110 px
   const B1_X = 600, B1_Y = 100;
-  tile(B1_X, B1_Y, 100, 80, k.rgb(40, 60, 140), 2);        // walls
-  tile(B1_X + 4, B1_Y + 4, 92, 72, k.rgb(50, 75, 165), 2); // wall lighter
-  // Roof
-  tile(B1_X - 4, B1_Y - 8, 108, 16, k.rgb(30, 40, 100), 3);
-  // Windows
-  tile(B1_X + 10, B1_Y + 16, 22, 18, k.rgb(180, 220, 255), 2);
-  tile(B1_X + 10, B1_Y + 16, 22, 2,  k.rgb(100, 150, 200), 3);
-  tile(B1_X + 21, B1_Y + 16, 2,  18, k.rgb(100, 150, 200), 3);
-  tile(B1_X + 68, B1_Y + 16, 22, 18, k.rgb(180, 220, 255), 2);
-  tile(B1_X + 68, B1_Y + 16, 22, 2,  k.rgb(100, 150, 200), 3);
-  tile(B1_X + 79, B1_Y + 16, 2,  18, k.rgb(100, 150, 200), 3);
-  // Door
-  tile(B1_X + 42, B1_Y + 52, 16, 28, k.rgb(80, 50, 20), 3);
-  tile(B1_X + 44, B1_Y + 54, 12, 24, k.rgb(140, 100, 50), 3);
-  // Sign
-  tile(B1_X + 20, B1_Y + 42, 60, 8, k.rgb(200, 170, 80), 3);
-  label(B1_X + 22, B1_Y + 43, ".NET+REACT GYM", 4, 4);
+  k.add([
+    k.sprite("gym_frontend"),
+    k.pos(B1_X + 50, B1_Y + 50),
+    k.anchor("center"),
+    k.scale(0.11),
+    k.z(3),
+  ]);
+  // Building 1 Sign Tag
+  tile(B1_X + 5, B1_Y + 102, 90, 12, k.rgb(20, 50, 100), 4);
+  label(B1_X + 8, B1_Y + 105, ".NET+REACT GYM", 4, 5, [255, 220, 100]);
+  wall(B1_X, B1_Y, 100, 95); // collision
 
-  // Building 2 — Quantum Lab
-  const B2_X = 720, B2_Y = 100;
-  tile(B2_X, B2_Y, 90, 80, k.rgb(80, 30, 120), 2);
-  tile(B2_X + 4, B2_Y + 4, 82, 72, k.rgb(100, 40, 150), 2);
-  tile(B2_X - 4, B2_Y - 8, 98, 16, k.rgb(60, 20, 90), 3);
-  // Windows (star-shaped for quantum feel)
-  tile(B2_X + 12, B2_Y + 16, 20, 18, k.rgb(220, 180, 255), 2);
-  tile(B2_X + 58, B2_Y + 16, 20, 18, k.rgb(220, 180, 255), 2);
-  // Door
-  tile(B2_X + 37, B2_Y + 52, 16, 28, k.rgb(60, 20, 80), 3);
-  tile(B2_X + 39, B2_Y + 54, 12, 24, k.rgb(120, 60, 160), 3);
-  // Sign
-  tile(B2_X + 8, B2_Y + 42, 74, 8, k.rgb(180, 140, 220), 3);
-  label(B2_X + 10, B2_Y + 43, "QUANTUM RL LAB", 4, 4);
-
-  // Gym 1 zone sign post
-  tile(G1_X + 10, G1_Y + 10, 6, 20, k.rgb(80, 55, 30), 3);
-  tile(G1_X + 8,  G1_Y + 4,  80, 12, k.rgb(60, 100, 180), 3);
-  tile(G1_X + 10, G1_Y + 6,  76, 8,  k.rgb(80, 130, 220), 3);
-  label(G1_X + 12, G1_Y + 7, "⚡ FRONTEND CITY", 4, 4);
-
-  // Gym 1 collision walls
-  wall(G1_X, G1_Y, 300, 8);
-  wall(G1_X, G1_Y, 8, 260);
-  wall(G1_X + 292, G1_Y, 8, 260);
-  wall(B1_X - 2, B1_Y - 2, 104, 84); // building 1
-  wall(B2_X - 2, B2_Y - 2, 94, 84);  // building 2
+  // Building 2 — Quantum RL Research Facility
+  const B2_X = 740, B2_Y = 100;
+  tile(B2_X, B2_Y, 95, 85, k.rgb(75, 30, 125), 2);
+  tile(B2_X + 4, B2_Y + 4, 87, 77, k.rgb(95, 45, 155), 2);
+  tile(B2_X - 4, B2_Y - 8, 103, 16, k.rgb(55, 20, 95), 3);
+  // Glowing Quantum Window
+  tile(B2_X + 15, B2_Y + 18, 24, 20, k.rgb(200, 160, 255), 3);
+  tile(B2_X + 56, B2_Y + 18, 24, 20, k.rgb(200, 160, 255), 3);
+  // Entrance door
+  tile(B2_X + 40, B2_Y + 56, 16, 29, k.rgb(50, 20, 70), 3);
+  // Quantum Lab Sign Tag
+  tile(B2_X + 6, B2_Y + 92, 84, 12, k.rgb(60, 20, 90), 4);
+  label(B2_X + 10, B2_Y + 95, "QUANTUM RL LAB", 4, 5, [220, 180, 255]);
+  wall(B2_X - 2, B2_Y - 2, 99, 89); // collision
 
   // ══════════════════════════════════════════════════════════════
   //  GYM 2 — SYSTEMS HUB (bottom-right quadrant)
   // ══════════════════════════════════════════════════════════════
-  const G2_X = 560, G2_Y = 450;
+  const G2_X = 570, G2_Y = 450;
 
-  // Zone ground (industrial gray)
-  tile(G2_X, G2_Y, 300, 260, k.rgb(60, 65, 70), 1);
-  // Grid lines
-  for (let ix = G2_X; ix < G2_X + 300; ix += 32) {
-    tile(ix, G2_Y, 2, 260, k.rgb(70, 76, 82), 2);
+  // Industrial Steel Base
+  tile(G2_X, G2_Y, 320, 280, k.rgb(65, 70, 75), 1);
+  for (let ix = G2_X; ix < G2_X + 320; ix += 32) {
+    tile(ix, G2_Y, 2, 280, k.rgb(80, 85, 92), 2);
   }
-  for (let iy = G2_Y; iy < G2_Y + 260; iy += 32) {
-    tile(G2_X, iy, 300, 2, k.rgb(70, 76, 82), 2);
+  for (let iy = G2_Y; iy < G2_Y + 280; iy += 32) {
+    tile(G2_X, iy, 320, 2, k.rgb(80, 85, 92), 2);
   }
 
-  // BC ERP building
-  const B3_X = 580, B3_Y = 490;
-  tile(B3_X, B3_Y, 90, 70, k.rgb(120, 80, 30), 2);
-  tile(B3_X + 3, B3_Y + 3, 84, 64, k.rgb(150, 100, 40), 2);
-  tile(B3_X - 4, B3_Y - 8, 98, 14, k.rgb(90, 60, 20), 3);
-  tile(B3_X + 10, B3_Y + 14, 20, 16, k.rgb(240, 200, 120), 2);
-  tile(B3_X + 60, B3_Y + 14, 20, 16, k.rgb(240, 200, 120), 2);
-  tile(B3_X + 38, B3_Y + 46, 14, 24, k.rgb(80, 50, 20), 3);
-  tile(B3_X + 10, B3_Y + 36, 70, 8, k.rgb(220, 180, 80), 3);
-  label(B3_X + 12, B3_Y + 37, "BC ERP HUB", 4, 4);
+  // Zone Header Sign
+  tile(G2_X + 10, G2_Y + 10, 110, 16, k.rgb(100, 30, 10), 4);
+  tile(G2_X + 12, G2_Y + 12, 106, 12, k.rgb(200, 70, 30), 4);
+  label(G2_X + 16, G2_Y + 16, "⚙ SYSTEMS HUB", 4, 5, [255, 255, 255]);
 
-  // ClickHouse building
-  const B4_X = 700, B4_Y = 490;
-  tile(B4_X, B4_Y, 80, 70, k.rgb(180, 60, 30), 2);
-  tile(B4_X + 3, B4_Y + 3, 74, 64, k.rgb(210, 75, 40), 2);
-  tile(B4_X - 4, B4_Y - 8, 88, 14, k.rgb(140, 45, 20), 3);
-  tile(B4_X + 10, B4_Y + 14, 18, 16, k.rgb(255, 200, 180), 2);
-  tile(B4_X + 52, B4_Y + 14, 18, 16, k.rgb(255, 200, 180), 2);
-  tile(B4_X + 34, B4_Y + 46, 12, 24, k.rgb(100, 30, 10), 3);
-  tile(B4_X + 8,  B4_Y + 36, 64, 8, k.rgb(255, 160, 100), 3);
-  label(B4_X + 10, B4_Y + 37, "CLICKHOUSE", 4, 4);
+  // Building 1 — Business Central ERP Gym Sprite
+  // gym_systems.png: 880×865 -> Scale 0.11 => ~96×95 px
+  const B3_X = 590, B3_Y = 490;
+  k.add([
+    k.sprite("gym_systems"),
+    k.pos(B3_X + 48, B3_Y + 48),
+    k.anchor("center"),
+    k.scale(0.11),
+    k.z(3),
+  ]);
+  tile(B3_X + 4, B3_Y + 98, 88, 12, k.rgb(100, 40, 10), 4);
+  label(B3_X + 8, B3_Y + 101, "BC ERP HUB", 4, 5, [255, 200, 100]);
+  wall(B3_X, B3_Y, 96, 95);
 
-  // DB Infra building
-  const B5_X = 640, B5_Y = 590;
-  tile(B5_X, B5_Y, 100, 70, k.rgb(50, 100, 80), 2);
-  tile(B5_X + 3, B5_Y + 3, 94, 64, k.rgb(65, 120, 95), 2);
-  tile(B5_X - 4, B5_Y - 8, 108, 14, k.rgb(35, 75, 60), 3);
-  tile(B5_X + 12, B5_Y + 14, 20, 16, k.rgb(150, 220, 180), 2);
-  tile(B5_X + 68, B5_Y + 14, 20, 16, k.rgb(150, 220, 180), 2);
-  tile(B5_X + 44, B5_Y + 46, 12, 24, k.rgb(30, 70, 50), 3);
-  tile(B5_X + 10, B5_Y + 36, 80, 8, k.rgb(100, 200, 140), 3);
-  label(B5_X + 12, B5_Y + 37, "DB INFRA", 4, 4);
+  // Building 2 — ClickHouse Analytics Hub
+  const B4_X = 720, B4_Y = 490;
+  tile(B4_X, B4_Y, 85, 75, k.rgb(180, 70, 30), 2);
+  tile(B4_X + 3, B4_Y + 3, 79, 69, k.rgb(210, 85, 40), 2);
+  tile(B4_X - 4, B4_Y - 8, 93, 14, k.rgb(140, 50, 20), 3);
+  tile(B4_X + 12, B4_Y + 16, 20, 16, k.rgb(255, 210, 180), 3);
+  tile(B4_X + 53, B4_Y + 16, 20, 16, k.rgb(255, 210, 180), 3);
+  tile(B4_X + 36, B4_Y + 48, 14, 27, k.rgb(100, 35, 10), 3);
+  tile(B4_X + 2, B4_Y + 80, 81, 12, k.rgb(140, 50, 20), 4);
+  label(B4_X + 6, B4_Y + 83, "CLICKHOUSE", 4, 5, [255, 210, 150]);
+  wall(B4_X - 2, B4_Y - 2, 89, 79);
 
-  // Gym 2 zone sign
-  tile(G2_X + 10, G2_Y + 10, 6, 20, k.rgb(80, 55, 30), 3);
-  tile(G2_X + 8,  G2_Y + 4,  80, 12, k.rgb(160, 60, 30), 3);
-  tile(G2_X + 10, G2_Y + 6,  76, 8,  k.rgb(200, 80, 40), 3);
-  label(G2_X + 12, G2_Y + 7, "⚙ SYSTEMS HUB", 4, 4);
-
-  // Gym 2 collision walls
-  wall(G2_X, G2_Y, 300, 8);
-  wall(G2_X, G2_Y, 8, 260);
-  wall(G2_X + 292, G2_Y, 8, 260);
-  wall(G2_X, G2_Y + 252, 300, 8);
-  wall(B3_X - 2, B3_Y - 2, 94, 74);
-  wall(B4_X - 2, B4_Y - 2, 84, 74);
-  wall(B5_X - 2, B5_Y - 2, 104, 74);
+  // Building 3 — DB & Infra Center
+  const B5_X = 640, B5_Y = 600;
+  tile(B5_X, B5_Y, 110, 75, k.rgb(45, 95, 75), 2);
+  tile(B5_X + 3, B5_Y + 3, 104, 69, k.rgb(60, 115, 90), 2);
+  tile(B5_X - 4, B5_Y - 8, 118, 14, k.rgb(30, 70, 55), 3);
+  tile(B5_X + 15, B5_Y + 16, 22, 16, k.rgb(160, 230, 190), 3);
+  tile(B5_X + 73, B5_Y + 16, 22, 16, k.rgb(160, 230, 190), 3);
+  tile(B5_X + 48, B5_Y + 48, 14, 27, k.rgb(25, 60, 45), 3);
+  tile(B5_X + 12, B5_Y + 80, 86, 12, k.rgb(30, 70, 55), 4);
+  label(B5_X + 16, B5_Y + 83, "DB INFRA", 4, 5, [180, 240, 200]);
+  wall(B5_X - 2, B5_Y - 2, 114, 79);
 
   // ══════════════════════════════════════════════════════════════
   //  PROFESSOR'S LAB (bottom-left quadrant)
   // ══════════════════════════════════════════════════════════════
-  const LAB_X = 60, LAB_Y = 450;
+  const LAB_X = 50, LAB_Y = 450;
 
-  // Zone ground (warm wooden floor)
-  tile(LAB_X, LAB_Y, 400, 260, k.rgb(140, 100, 60), 1);
-  // Wood floor plank lines
-  for (let lx = LAB_X; lx < LAB_X + 400; lx += 24) {
-    tile(lx, LAB_Y, 2, 260, k.rgb(120, 85, 50), 2);
+  // Warm Hardwood Decking Base
+  tile(LAB_X, LAB_Y, 410, 280, k.rgb(145, 105, 65), 1);
+  for (let lx = LAB_X; lx < LAB_X + 410; lx += 20) {
+    tile(lx, LAB_Y, 2, 280, k.rgb(125, 88, 52), 2);
   }
-  for (let ly = LAB_Y; ly < LAB_Y + 260; ly += 8) {
-    tile(LAB_X, ly, 400, 1, k.rgb(125, 88, 52), 2);
+  for (let ly = LAB_Y; ly < LAB_Y + 280; ly += 10) {
+    tile(LAB_X, ly, 410, 1, k.rgb(130, 92, 55), 2);
   }
 
-  // Lab main building
-  const LAB_BX = 100, LAB_BY = 480;
-  tile(LAB_BX, LAB_BY, 240, 180, k.rgb(70, 50, 120), 2);
-  tile(LAB_BX + 4, LAB_BY + 4, 232, 172, k.rgb(85, 65, 140), 2);
-  // Roof
-  tile(LAB_BX - 8, LAB_BY - 12, 256, 20, k.rgb(50, 35, 90), 3);
-  // Roof diamond decoration
-  for (let rd = 0; rd < 10; rd++) {
-    tile(LAB_BX + 20 + rd * 22, LAB_BY - 12, 8, 8, k.rgb(180, 150, 255), 3);
-  }
-  // Windows (2×3 grid)
-  [0, 1, 2].forEach(col => {
-    [0, 1].forEach(row => {
-      const wx = LAB_BX + 20 + col * 80;
-      const wy = LAB_BY + 24 + row * 58;
-      tile(wx, wy, 32, 28, k.rgb(180, 220, 255), 2);
-      tile(wx + 15, wy, 2, 28, k.rgb(120, 160, 200), 3);
-      tile(wx, wy + 13, 32, 2, k.rgb(120, 160, 200), 3);
-    });
-  });
-  // Door (double door, grand entrance)
-  tile(LAB_BX + 96, LAB_BY + 140, 48, 40, k.rgb(50, 30, 80), 3);
-  tile(LAB_BX + 100, LAB_BY + 144, 20, 36, k.rgb(100, 70, 160), 3);
-  tile(LAB_BX + 122, LAB_BY + 144, 20, 36, k.rgb(100, 70, 160), 3);
-  tile(LAB_BX + 116, LAB_BY + 158, 8, 8, k.rgb(220, 200, 100), 3); // handles
+  // Zone Header Sign
+  tile(LAB_X + 10, LAB_Y + 10, 110, 16, k.rgb(60, 30, 90), 4);
+  tile(LAB_X + 12, LAB_Y + 12, 106, 12, k.rgb(110, 60, 170), 4);
+  label(LAB_X + 16, LAB_Y + 16, "🔬 PROF'S LAB", 4, 5, [255, 255, 255]);
 
-  // Signs (outside the lab)
-  const SIGN_DEFS = [
-    { x: LAB_BX + 10, y: LAB_BY - 30, text: "ABOUT ME" },
-    { x: LAB_BX + 90, y: LAB_BY - 30, text: "TECH STACK" },
-    { x: LAB_BX + 180, y: LAB_BY - 30, text: "EDUCATION" },
-  ];
-  SIGN_DEFS.forEach(s => {
-    tile(s.x + 6, s.y - 12, 4, 14, k.rgb(80, 55, 30), 3);
-    tile(s.x, s.y, 72, 12, k.rgb(200, 170, 80), 3);
-    tile(s.x + 2, s.y + 2, 68, 8, k.rgb(240, 210, 120), 3);
-    label(s.x + 4, s.y + 3, s.text, 4, 4);
-  });
+  // Main Professor Laboratory Building Sprite
+  // prof_lab.png: 922×640 -> Scale 0.18 => ~165×115 px
+  const LAB_BX = 80, LAB_BY = 480;
+  k.add([
+    k.sprite("prof_lab"),
+    k.pos(LAB_BX + 100, LAB_BY + 65),
+    k.anchor("center"),
+    k.scale(0.18),
+    k.z(3),
+  ]);
+  wall(LAB_BX + 10, LAB_BY + 10, 180, 110); // collision
 
-  // Experience + Resume signs (further right)
-  tile(LAB_BX + 20, LAB_BY + 200, 4, 14, k.rgb(80, 55, 30), 3);
-  tile(LAB_BX + 10, LAB_BY + 210, 82, 12, k.rgb(200, 170, 80), 3);
-  tile(LAB_BX + 12, LAB_BY + 212, 78, 8, k.rgb(240, 210, 120), 3);
-  label(LAB_BX + 14, LAB_BY + 213, "EXPERIENCE", 4, 4);
-
-  tile(LAB_BX + 130, LAB_BY + 200, 4, 14, k.rgb(80, 55, 30), 3);
-  tile(LAB_BX + 120, LAB_BY + 210, 90, 12, k.rgb(220, 50, 50), 3);
-  tile(LAB_BX + 122, LAB_BY + 212, 86, 8, k.rgb(255, 100, 100), 3);
-  label(LAB_BX + 124, LAB_BY + 213, "↓ RESUME PDF", 4, 4);
-
-  // Zone sign
-  tile(LAB_X + 10, LAB_Y + 10, 6, 20, k.rgb(80, 55, 30), 3);
-  tile(LAB_X + 8,  LAB_Y + 4,  100, 12, k.rgb(80, 50, 130), 3);
-  tile(LAB_X + 10, LAB_Y + 6,  96,  8,  k.rgb(110, 70, 170), 3);
-  label(LAB_X + 12, LAB_Y + 7, "🔬 PROF'S LAB", 4, 4);
-
-  // Lab collision walls
-  wall(LAB_X, LAB_Y, 400, 8);
-  wall(LAB_X, LAB_Y, 8, 260);
-  wall(LAB_X + 392, LAB_Y, 8, 260);
-  wall(LAB_X, LAB_Y + 252, 400, 8);
-  wall(LAB_BX - 2, LAB_BY - 2, 244, 184); // main building
-
-  // ══════════════════════════════════════════════════════════════
-  //  TREES — scattered across the world
-  // ══════════════════════════════════════════════════════════════
-  const TREE_POSITIONS = [
-    // Top-left area
-    [40, 60], [100, 40], [160, 80], [220, 50], [300, 70], [40, 140], [120, 160],
-    // Top path edges
-    [30, 220], [30, 260], [30, 300], [900, 220], [900, 260], [900, 300],
-    // Bottom borders
-    [30, 650], [30, 700], [30, 740], [900, 650], [900, 700], [900, 740],
-    // Mid area between zones
-    [520, 120], [520, 200], [520, 280], [520, 550], [520, 640], [520, 720],
+  // Interactive Signposts (outside the lab)
+  const LAB_SIGNS = [
+    { x: LAB_BX + 10,  y: LAB_BY - 32, labelText: "ABOUT ME" },
+    { x: LAB_BX + 95,  y: LAB_BY - 32, labelText: "TECH STACK" },
+    { x: LAB_BX + 180, y: LAB_BY - 32, labelText: "EDUCATION" },
   ];
 
-  TREE_POSITIONS.forEach(([tx, ty]) => {
-    // Trunk
-    tile(tx! + 4, ty! + 16, 8, 12, k.rgb(100, 65, 20), 2);
-    // Canopy (3 layers for depth)
-    tile(tx! - 2,  ty! + 8,  20, 14, k.rgb(0, 110, 0),  3);
-    tile(tx! - 4,  ty! + 2,  24, 12, k.rgb(0, 140, 0),  3);
-    tile(tx!,      ty! - 4,  16, 12, k.rgb(0, 160, 0),  3);
-    // Shadow
-    tile(tx! + 1,  ty! + 26, 14, 4,  k.rgb(20, 70, 20), 2);
-    // Wall for tree
-    wall(tx! + 2, ty! + 14, 12, 14);
+  LAB_SIGNS.forEach(s => {
+    // signpost sprite prop
+    k.add([
+      k.sprite("signpost"),
+      k.pos(s.x + 36, s.y + 6),
+      k.scale(0.04),
+      k.anchor("center"),
+      k.z(3),
+    ]);
+    tile(s.x, s.y, 72, 12, k.rgb(70, 45, 20), 4);
+    tile(s.x + 2, s.y + 2, 68, 8, k.rgb(240, 200, 120), 4);
+    label(s.x + 4, s.y + 4, s.labelText, 4, 5, [70, 45, 20]);
+  });
+
+  // Experience Sign
+  k.add([
+    k.sprite("signpost"),
+    k.pos(LAB_BX + 45, LAB_BY + 190),
+    k.scale(0.04),
+    k.anchor("center"),
+    k.z(3),
+  ]);
+  tile(LAB_BX + 10, LAB_BY + 185, 78, 12, k.rgb(70, 45, 20), 4);
+  tile(LAB_BX + 12, LAB_BY + 187, 74, 8, k.rgb(240, 200, 120), 4);
+  label(LAB_BX + 14, LAB_BY + 189, "EXPERIENCE", 4, 5, [70, 45, 20]);
+
+  // Resume PDF Sign (Bright Red accent)
+  k.add([
+    k.sprite("signpost"),
+    k.pos(LAB_BX + 165, LAB_BY + 190),
+    k.scale(0.04),
+    k.anchor("center"),
+    k.z(3),
+  ]);
+  tile(LAB_BX + 125, LAB_BY + 185, 88, 12, k.rgb(160, 20, 20), 4);
+  tile(LAB_BX + 127, LAB_BY + 187, 84, 8, k.rgb(240, 70, 70), 4);
+  label(LAB_BX + 129, LAB_BY + 189, "↓ RESUME PDF", 4, 5, [255, 255, 255]);
+
+  // ══════════════════════════════════════════════════════════════
+  //  TREES — Pokemon Oak Trees Scattered Across Map
+  // ══════════════════════════════════════════════════════════════
+  // tree_oak.png: 1004×1004 -> Scale 0.045 => ~45×45 px
+  const OAK_TREES = [
+    // Top-left forest grove
+    [30, 40],   [90, 30],   [150, 60],  [210, 35],  [270, 65],  [330, 40],
+    [30, 120],  [90, 150],  [160, 130], [220, 160], [280, 120],
+    // Top border along path
+    [30, 220],  [30, 280],  [910, 220], [910, 280],
+    // Mid zone upper dividers
+    [520, 100], [520, 180], [520, 260],
+    // Outer perimeter bottom border
+    [30, 730],  [120, 740], [240, 740], [360, 740], [480, 740],
+    [600, 740], [720, 740], [840, 740], [910, 730],
+  ];
+
+  OAK_TREES.forEach(([tx, ty]) => {
+    // Shadow under tree
+    tile(tx! - 16, ty! + 12, 32, 10, k.rgb(25, 75, 25), 1);
+    // Tree sprite
+    k.add([
+      k.sprite("tree_oak"),
+      k.pos(tx!, ty!),
+      k.anchor("center"),
+      k.scale(0.045),
+      k.z(4),
+    ]);
+    // Tight Trunk Collider (allows smooth movement around trees)
+    wall(tx! - 6, ty! + 4, 12, 8);
   });
 
   // ══════════════════════════════════════════════════════════════
   //  WORLD BORDER WALLS
   // ══════════════════════════════════════════════════════════════
-  tile(0,   0,   W,  8,   k.rgb(50, 35, 20), 5); // top
-  tile(0,   H-8, W,  8,   k.rgb(50, 35, 20), 5); // bottom
-  tile(0,   0,   8,  H,   k.rgb(50, 35, 20), 5); // left
-  tile(W-8, 0,   8,  H,   k.rgb(50, 35, 20), 5); // right
+  tile(0, 0, W, 8, k.rgb(40, 25, 15), 5);
+  tile(0, H - 8, W, 8, k.rgb(40, 25, 15), 5);
+  tile(0, 0, 8, H, k.rgb(40, 25, 15), 5);
+  tile(W - 8, 0, 8, H, k.rgb(40, 25, 15), 5);
   wall(0, 0, W, 8);
   wall(0, H - 8, W, 8);
   wall(0, 0, 8, H);
   wall(W - 8, 0, 8, H);
 
   // ══════════════════════════════════════════════════════════════
-  //  TRIGGER ZONES (invisible interaction areas)
+  //  TRIGGER ZONES (Interaction Areas)
   // ══════════════════════════════════════════════════════════════
   const triggers: Array<{ name: string; x: number; y: number; w: number; h: number }> = [
     // Town Square
-    { name: "welcome-sign",          x: 348, y: 314, w: 64, h: 20 },
-    { name: "npc-guide",             x: 356, y: 344, w: 24, h: 24 },
+    { name: "welcome-sign",          x: 338, y: 310, w: 60, h: 20 },
+    { name: "npc-guide",             x: 355, y: 350, w: 25, h: 30 },
     // Gym 1 — Frontend City
-    { name: "building-dotnet-react", x: B1_X + 40, y: B1_Y + 60, w: 20, h: 20 },
-    { name: "building-quantum",      x: B2_X + 36, y: B2_Y + 60, w: 20, h: 20 },
+    { name: "building-dotnet-react", x: B1_X + 35, y: B1_Y + 80, w: 30, h: 25 },
+    { name: "building-quantum",      x: B2_X + 35, y: B2_Y + 70, w: 30, h: 25 },
     // Gym 2 — Systems Hub
-    { name: "building-bc-erp",       x: B3_X + 36, y: B3_Y + 55, w: 20, h: 20 },
-    { name: "building-clickhouse",   x: B4_X + 30, y: B4_Y + 55, w: 20, h: 20 },
-    { name: "building-db-infra",     x: B5_X + 42, y: B5_Y + 55, w: 20, h: 20 },
+    { name: "building-bc-erp",       x: B3_X + 30, y: B3_Y + 75, w: 30, h: 25 },
+    { name: "building-clickhouse",   x: B4_X + 28, y: B4_Y + 65, w: 30, h: 25 },
+    { name: "building-db-infra",     x: B5_X + 40, y: B5_Y + 65, w: 30, h: 25 },
     // Professor's Lab
-    { name: "about-sign",            x: LAB_BX + 10, y: LAB_BY - 34, w: 72, h: 16 },
-    { name: "tech-stack",            x: LAB_BX + 90, y: LAB_BY - 34, w: 72, h: 16 },
-    { name: "education",             x: LAB_BX + 180, y: LAB_BY - 34, w: 72, h: 16 },
-    { name: "experience",            x: LAB_BX + 10, y: LAB_BY + 207, w: 82, h: 16 },
-    { name: "resume-download",       x: LAB_BX + 120, y: LAB_BY + 207, w: 90, h: 16 },
+    { name: "about-sign",            x: LAB_BX + 10, y: LAB_BY - 36, w: 72, h: 18 },
+    { name: "tech-stack",            x: LAB_BX + 95, y: LAB_BY - 36, w: 72, h: 18 },
+    { name: "education",             x: LAB_BX + 180, y: LAB_BY - 36, w: 72, h: 18 },
+    { name: "experience",            x: LAB_BX + 10, y: LAB_BY + 180, w: 78, h: 20 },
+    { name: "resume-download",       x: LAB_BX + 125, y: LAB_BY + 180, w: 88, h: 20 },
   ];
 
   triggers.forEach(t => {
@@ -473,7 +543,7 @@ k.scene("game", () => {
     if (!p) return;
 
     const nearby = k.get("trigger")
-      .filter((t: any) => t.pos.dist(p.pos) < 40)
+      .filter((t: any) => t.pos.dist(p.pos) < 45)
       .sort((a: any, b: any) => a.pos.dist(p.pos) - b.pos.dist(p.pos));
 
     if (nearby.length === 0) return;
