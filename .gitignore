@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# art preview renders (npm run art:preview)
+art-preview

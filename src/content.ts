@@ -1,181 +1,211 @@
 // src/content.ts
-// ─── All modal content for every trigger point ───
+// ─── Single source of truth for everything the portfolio says ───
+// Panels, the project list, the résumé and the <noscript> fallback all read from here.
+// Source: "Upanshu Pandey CV 2026". Keep every claim traceable to the CV.
 
-export interface ModalData {
-  zone:  string;        // zone label shown as tag
+export const PROFILE = {
+  name: "Upanshu Pandey",
+  title: "ERP Consultant · Full-Stack Developer",
+  location: "Kathmandu, Nepal",
+  status: "Open to new roles",
+  email: "upanshupandey@gmail.com",
+  linkedin: "https://www.linkedin.com/in/upanshu-pandey-48a48b1a4/",
+  resume: "assets/resume/upanshu-pandey-cv.pdf",
+  summary:
+    "Technical Consultant and Full-Stack Developer with nearly four years of experience across " +
+    "Microsoft Dynamics 365 Business Central, full-stack C# and React applications, and AI and data work: " +
+    "a RAG pipeline on a Qdrant vector database and machine learning forecasting models in Python. " +
+    "I like the unglamorous parts too: integrations, databases and servers that keep production running.",
+};
+
+export type Category = "WEB" | "DATA" | "ERP" | "AI" | "INFRA" | "API";
+
+/** Colour-coded category tags. */
+export const CATEGORY_COLORS: Record<Category, string> = {
+  WEB: "#5888d8", DATA: "#9870d0", ERP: "#e08838", AI: "#e05890", INFRA: "#708090", API: "#48a878",
+};
+
+export interface Project {
+  id: string;
   title: string;
-  body:  string;
-  tags:  string[];
+  short: string;          // one-liner for lists
+  building: "web" | "systems";
+  categories: Category[];
+  when: string;
+  body: string[];         // paragraphs
+  highlights: string[];
+  tags: string[];
 }
 
-export const MODAL_CONTENT: Record<string, ModalData> = {
-
-  // ── GYM 1 — FRONTEND CITY ────────────────────────────────────
-
-  "building-dotnet-react": {
-    zone:  "🏋️ Gym 1 — Frontend City",
-    title: "Full-Stack Business Application",
-    body: `A production full-stack application developed at Voyager Nepal, combining a modern React frontend with a robust .NET backend.
-
-The application leverages ClickHouse — a high-performance columnar database — for analytics and reporting workloads, enabling fast aggregations over large datasets that traditional OLTP databases struggle with.
-
-The architecture separates the React SPA from the .NET API layer, allowing independent scaling and deployment of each tier. The ClickHouse integration powers real-time dashboards and data-intensive reporting features.`,
-    tags: [".NET", "React", "ClickHouse", "REST API", "TypeScript", "C#"],
+export const PROJECTS: Project[] = [
+  {
+    id: "fullstack",
+    title: "Full-Stack Business Applications",
+    short: "C# and React applications, including an Azure-hosted app",
+    building: "web",
+    categories: ["WEB"],
+    when: "Voyager Nepal · 2024–2026",
+    body: [
+      "At Voyager Nepal I developed full-stack applications with a C# (.NET) backend and a React front end.",
+      "I also worked on an application hosted on Azure, alongside the containerised services (Qdrant, Redis, ClickHouse) that backed our enterprise tooling.",
+    ],
+    highlights: [
+      "Full-stack development in C# and React",
+      "Work on an Azure-hosted application",
+      "Built alongside Business Central consultancy for the same clients",
+    ],
+    tags: ["C#", ".NET", "React", "Azure", "Docker"],
   },
-
-  "building-quantum": {
-    zone:  "🏋️ Gym 1 — Frontend City",
-    title: "Quantum Reinforcement Learning — Circuit Optimizer",
-    body: `A research-grade web application developed as my university dissertation project, combining quantum computing with reinforcement learning to optimize quantum circuits.
-
-The system uses Proximal Policy Optimization (PPO) — a modern RL algorithm — to learn how to construct minimal quantum circuits that correctly implement the Bernstein-Vazirani algorithm. The agent is trained on a simulated quantum environment built with Qiskit, IBM's open-source quantum computing framework.
-
-The results are visualized in an interactive Streamlit web interface, allowing users to observe how the agent's circuit decisions evolve across training episodes.
-
-This project earned a First Class grade as part of a BSc Computing (Hons) degree.`,
-    tags: ["Python", "Qiskit", "Streamlit", "PPO (RL)", "TensorFlow", "NumPy"],
+  {
+    id: "ecommerce",
+    title: "E-Commerce Website",
+    short: "Laravel store with search, cart, checkout and payments",
+    building: "web",
+    categories: ["WEB"],
+    when: "Personal project",
+    body: [
+      "A complete e-commerce website built with Laravel.",
+      "Shoppers can browse with product filters, site search and navigation, add items to a cart, check out with online payment, and leave reviews and comments on products.",
+    ],
+    highlights: [
+      "Product filters, site search and navigation",
+      "Cart, checkout and online payment",
+      "Product reviews and comments",
+    ],
+    tags: ["Laravel", "PHP", "HTML", "CSS"],
   },
-
-  // ── GYM 2 — SYSTEMS HUB ─────────────────────────────────────
-
-  "building-bc-erp": {
-    zone:  "⚡ Gym 2 — Systems Hub",
-    title: "Microsoft Business Central ERP — Custom Development",
-    body: `Over 2.5 years at Agile Solutions, I worked as a Technical Consultant delivering end-to-end Microsoft Business Central ERP implementations for enterprise clients.
-
-Core work included writing AL and C/AL extensions to customize Business Central workflows, forms, reports, and business logic to match each client's specific operational requirements.
-
-A significant part of the role involved API development — creating and consuming REST APIs to bridge Business Central with external systems including POS terminals, cloud services, and IRD (Nepal's Inland Revenue Department) for tax compliance reporting.
-
-I also maintained Annual Maintenance Contracts (AMC), providing ongoing support, configuration, upgrades, and troubleshooting for live production ERP environments.`,
-    tags: ["AL", "C/AL", "Business Central", "REST APIs", "SQL Server", "Git"],
+  {
+    id: "quantum",
+    title: "Quantum RL Circuit Optimizer",
+    short: "PPO agent that learns to build quantum circuits",
+    building: "web",
+    categories: ["AI", "WEB"],
+    when: "BSc dissertation · 2023 · First Class",
+    body: [
+      "My dissertation project: a web app that optimises quantum circuit creation for the Bernstein–Vazirani algorithm.",
+      "A Proximal Policy Optimization (PPO) reinforcement-learning agent learns to build the circuits, working against a quantum simulation built with Qiskit.",
+      "The app itself is written in Python with Streamlit.",
+    ],
+    highlights: [
+      "Reinforcement learning with Proximal Policy Optimization",
+      "Quantum circuits built and simulated with Qiskit",
+      "Streamlit web app; graded First Class",
+    ],
+    tags: ["Python", "Qiskit", "PPO", "Streamlit"],
   },
-
-  "building-clickhouse": {
-    zone:  "⚡ Gym 2 — Systems Hub",
-    title: "ClickHouse — High-Performance Analytics Database",
-    body: `At Voyager Nepal, I work extensively with ClickHouse — an open-source columnar OLAP database designed for real-time analytical queries on large datasets.
-
-Unlike row-oriented databases (PostgreSQL, MySQL), ClickHouse stores data in columns, enabling extremely fast aggregations — critical for dashboards, usage reports, and business intelligence workloads where you're scanning millions of rows.
-
-My work includes schema design for analytical tables, writing optimized ClickHouse SQL queries, integrating ClickHouse with the .NET application layer, and building data pipelines that feed reporting systems in near real-time.`,
-    tags: ["ClickHouse", "SQL", ".NET", "Data Pipelines", "OLAP"],
+  {
+    id: "ai-data",
+    title: "RAG Pipeline & Forecasting for Business Central",
+    short: "Enterprise data → Qdrant embeddings for a chatbot, plus ML forecasts",
+    building: "systems",
+    categories: ["AI", "DATA"],
+    when: "Voyager Nepal · 2024–2026",
+    body: [
+      "I built a retrieval-augmented generation (RAG) pipeline that extracted business intelligence from Business Central .app files and stored the embeddings in a Qdrant vector database, giving a chatbot under development access to enterprise data.",
+      "For the same enterprise systems, I developed machine learning models in Python to forecast data.",
+    ],
+    highlights: [
+      "Extraction from Business Central .app files",
+      "Embeddings stored in Qdrant (vector database)",
+      "Python ML forecasting models for the same systems",
+    ],
+    tags: ["Python", "RAG", "Qdrant", "Business Central"],
   },
-
-  "building-db-infra": {
-    zone:  "⚡ Gym 2 — Systems Hub",
-    title: "Database Engineering & Server Infrastructure",
-    body: `Across multiple client environments at Agile Solutions, I handled the full database and server engineering layer for Business Central deployments.
-
-This included designing and managing SQL Server databases, writing PL/SQL procedures and database triggers for data integrity and security enforcement, and managing SSL certificate provisioning and renewal for client servers.
-
-On the infrastructure side, I managed On-Premise Windows Servers — diagnosing network issues, configuring Business Central and SQL Server instances, and ensuring high availability for production environments running under AMC agreements.
-
-I maintained all client codebases in GitHub, following version control best practices across concurrent client projects.`,
-    tags: ["SQL Server", "PL/SQL", "Database Triggers", "SSL", "Windows Server", "GitHub"],
+  {
+    id: "bc-erp",
+    title: "Business Central ERP Consulting",
+    short: "Customisations, integrations and AMC support for clients",
+    building: "systems",
+    categories: ["ERP", "API"],
+    when: "Agile Solutions & Voyager Nepal · 2022–2026",
+    body: [
+      "Across both roles I provided technical consultancy on Microsoft Dynamics 365 Business Central and developed customisations to client specifications, in AL and C/AL.",
+      "I created and consumed APIs to integrate data between cloud and on-premise environments, sync POS systems to the database, and meet IRD (Inland Revenue Department) requirements.",
+      "Under Annual Maintenance Contracts I maintained and configured clients' Business Central and SQL Server instances.",
+    ],
+    highlights: [
+      "Client customisations in AL and C/AL",
+      "Cloud ↔ on-premise, POS and IRD integrations",
+      "AMC maintenance of Business Central and SQL Server",
+    ],
+    tags: ["Business Central", "AL", "C/AL", "APIs", "SQL Server"],
   },
-
-  // ── PROFESSOR'S LAB ─────────────────────────────────────────
-
-  "tech-stack": {
-    zone:  "🔬 Professor's Lab",
-    title: "Tech Stack",
-    body: `ERP & Enterprise
-  ● Microsoft Business Central (AL / C-AL)
-  ● SQL Server & PL/SQL
-  ● REST API Design & Integration
-
-Full-Stack Development
-  ● .NET (C#) — Backend
-  ● React (TypeScript) — Frontend
-  ● Laravel (PHP)
-
-Data & Analytics
-  ● ClickHouse OLAP Database
-  ● Python (NumPy, Pandas, TensorFlow)
-  ● Qiskit (Quantum Computing)
-
-DevOps & Infrastructure
-  ● Git & GitHub
-  ● SSL Certificate Management
-  ● Windows Server (On-Premise)
-  ● Cloud ↔ On-Premise Integration`,
-    tags: [],
+  {
+    id: "infra",
+    title: "Databases & Infrastructure",
+    short: "Docker services, SQL Server, triggers, SSL and on-prem servers",
+    building: "systems",
+    categories: ["INFRA", "DATA"],
+    when: "Agile Solutions & Voyager Nepal · 2022–2026",
+    body: [
+      "At Voyager Nepal I maintained the Docker containers running Qdrant, Redis, ClickHouse and other services.",
+      "At Agile Solutions I created and managed databases and database triggers for data security, created and managed SSL certificates, and handled server and network issues on clients' on-premise servers.",
+      "The code base lived in GitHub repositories that I managed.",
+    ],
+    highlights: [
+      "Docker containers for Qdrant, Redis and ClickHouse",
+      "Databases and triggers for data security",
+      "SSL certificates and on-premise server support",
+    ],
+    tags: ["Docker", "SQL Server", "PL/SQL", "Redis", "ClickHouse", "GitHub", "SSL"],
   },
+];
 
-  "education": {
-    zone:  "🔬 Professor's Lab",
-    title: "Education",
-    body: `BSc Computing (Hons) — First Class Honours
-The British College, Kathmandu  |  2020 – 2023
-Affiliated with Leeds Beckett University, UK.
-Dissertation: Quantum Reinforcement Learning for
-Quantum Circuit Optimization (Qiskit + PPO).
+export interface Job {
+  org: string;
+  when: string;
+  roles: { title: string; when: string }[];
+  points: string[];
+}
 
-A-Levels
-GIHE, Kathmandu  |  2017 – 2019`,
-    tags: ["First Class Honours", "Leeds Beckett University", "The British College"],
+export const EXPERIENCE: Job[] = [
+  {
+    org: "Voyager Nepal",
+    when: "Oct 2024 – Jun 2026",
+    roles: [{ title: "Technical Consultant", when: "Oct 2024 – Jun 2026" }],
+    points: [
+      "Developed full-stack applications using C# and React.",
+      "Built a RAG pipeline that extracted business intelligence from Business Central .app files and stored embeddings in a Qdrant vector database, giving a chatbot under development access to enterprise data.",
+      "Developed machine learning models in Python to forecast data for the same enterprise systems.",
+      "Maintained Docker containers running Qdrant, Redis, ClickHouse and other services.",
+      "Worked on an application hosted on Azure.",
+      "Provided technical consultancy on Business Central ERP to clients and developed customisations to client specifications.",
+    ],
   },
-
-  "experience": {
-    zone:  "🔬 Professor's Lab",
-    title: "Work Experience",
-    body: `Technical Consultant
-Voyager Nepal  |  Oct 2024 – Present
-Full-stack .NET + React development, ClickHouse analytics
-engineering, and Business Central consultancy.
-
-Jr. Technical Consultant
-Agile Solutions  |  Jun 2023 – Oct 2024
-
-Associate Technical Consultant
-Agile Solutions  |  Dec 2022 – Jun 2023
-
-Technical Trainee
-Agile Solutions  |  Aug 2022 – Nov 2022
-
-Total professional experience: 3+ years
-Focus areas: ERP (Business Central) · APIs · Full-Stack · Data`,
-    tags: ["Voyager Nepal", "Agile Solutions", "3+ Years Experience"],
+  {
+    org: "Agile Solutions",
+    when: "Aug 2022 – Oct 2024",
+    roles: [
+      { title: "Jr. Technical Consultant", when: "Jun 2023 – Oct 2024" },
+      { title: "Associate Technical Consultant", when: "Dec 2022 – Jun 2023" },
+      { title: "Technical Trainee", when: "Aug 2022 – Nov 2022" },
+    ],
+    points: [
+      "Developed customisations on Business Central to client specifications.",
+      "Created and consumed APIs for integrating data between cloud and on-premise environments, syncing POS to database, and for IRD requirements.",
+      "Created and managed databases and database triggers for data security.",
+      "Managed the code base in GitHub repositories.",
+      "Provided technical consultancy on Business Central ERP, and maintained and configured Business Central and SQL Server instances under Annual Maintenance Contracts.",
+      "Created and managed SSL certificates; managed server and network issues of clients' on-premise servers.",
+    ],
   },
-};
+];
 
-// ─── Typewriter dialogue shown when approaching a trigger ───
+export const EDUCATION = [
+  { title: "BSc Computing (Hons), First Class Honours", org: "The British College, Kathmandu",
+    when: "2020 – 2023", note: "Dissertation: Quantum Reinforcement Learning for Quantum Circuit Optimization." },
+  { title: "A-Levels", org: "GIHE, Kathmandu", when: "2017 – 2019", note: "" },
+];
 
-export const TRIGGER_DIALOGUE: Record<string, string> = {
-  "welcome-sign":
-    "Welcome, Trainer! I'm Upanshu Pandey —\nan ERP Consultant & Full-Stack Developer\nfrom Kathmandu, Nepal. 🇳🇵\n\nPress SPACE near signs & buildings to interact.\nPress ESC to open the Pokédex for fast travel.",
+export const SKILLS: { group: string; items: string[] }[] = [
+  { group: "Languages", items: ["C#", "Python", "Java", "PL/SQL", "C/AL", "AL"] },
+  { group: "Frontend", items: ["React", "HTML", "CSS"] },
+  { group: "Backend & Frameworks", items: ["C#.NET", "Laravel"] },
+  { group: "Databases", items: ["SQL Server", "ClickHouse", "Redis", "PostgreSQL", "Qdrant (vector DB)"] },
+  { group: "Cloud & DevOps", items: ["Azure", "Docker", "GitHub", "SSL certificate management"] },
+  { group: "AI / Machine Learning", items: ["RAG systems", "TensorFlow", "Scikit-Learn", "Pandas", "NumPy", "Qiskit"] },
+  { group: "ERP", items: ["Microsoft Dynamics 365 Business Central"] },
+];
 
-  "npc-guide":
-    "Hey there! Head north for web & full-stack projects,\neast for ERP & backend work,\nor south to the Professor's Lab to learn about me.\n\nOr just press ESC — the Pokédex takes you anywhere!",
-
-  "building-dotnet-react":
-    "My most recent build — a full-stack app\nwith React on the frontend, .NET on the backend,\nand ClickHouse powering the analytics layer.",
-
-  "building-quantum":
-    "My dissertation project — quantum circuits\noptimized with reinforcement learning.\nQiskit + PPO + Streamlit. Graduated First Class.",
-
-  "building-bc-erp":
-    "2.5 years customizing Microsoft Business Central\nfor enterprise clients — AL extensions, REST APIs,\nPOS integrations, and IRD tax compliance.",
-
-  "building-clickhouse":
-    "ClickHouse — columnar OLAP for when your queries\nneed to scan millions of rows in milliseconds.\nThis is the analytics engine behind our stack.",
-
-  "building-db-infra":
-    "SQL Server, database triggers, SSL certs,\nOn-Premise server management — the unsexy work\nthat keeps production systems alive.",
-
-  "about-sign":
-    "Hi! I'm Upanshu Pandey.\n\nI'm a Technical Consultant and Full-Stack Developer\nbased in Kathmandu, Nepal, with 3+ years of experience\nacross ERP systems, backend APIs, and modern web apps.",
-
-  "tech-stack":
-    "The bookshelf of skills. From AL and Business Central\nto React, .NET, and ClickHouse. Plus a detour through\nquantum computing. It's been a ride.",
-
-  "education":
-    "BSc Computing, First Class Honours.\nThe British College, 2020–2023.\nMy dissertation was on quantum RL —\nnot your average final year project.",
-
-  "experience":
-    "3+ years from Trainee to Consultant.\nAgile Solutions shaped my ERP foundations.\nVoyager Nepal is where the full-stack work lives.",
-
-  "resume-download":
-    "Want a copy of my CV?\nPress SPACE to download the PDF —\nit has my full work history, skills, and contact details.",
-};
+// ─── Info panels opened from the Lab and House ───
+export type PanelId = "about" | "skills" | "education" | "experience" | "contact";

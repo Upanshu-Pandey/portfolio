@@ -1,160 +1,87 @@
-# 🎮 Upanshu's 2D Pokémon-Style RPG Portfolio — Beginner-Friendly Guide & Learning Roadmap
+# Upanshu's Retro RPG Portfolio: Learning Guide
 
-Welcome! This document breaks down **everything about your portfolio website project** in simple, plain English. It explains how the codebase works, what every file and folder does, and gives you a curated list of web learning resources so you can master the skills to build, modify, and extend this project yourself!
-
----
-
-## 📌 1. Project Overview & Core Concept
-
-Your portfolio is built as a **2D top-down RPG game** inspired by classic 16-bit Pokémon games (FireRed / Emerald). 
-
-Instead of a traditional static webpage, recruiters and visitors control a character walking around a pixel-art town with 4 distinct zones:
-1. **Town Square (Spawn Point)**: Stone plaza, fountain, welcome sign, and NPC guide.
-2. **Gym 1 (Frontend City)**: Buildings for Web Applications (.NET + React) & Quantum RL Lab.
-3. **Gym 2 (Systems Hub)**: Buildings for Business Central ERP, ClickHouse Analytics, & DB Infrastructure.
-4. **Professor's Lab**: About Me, Tech Stack, Education, Work Experience, & Downloadable PDF Resume.
-
-### 🏛️ The Hybrid Architecture (Canvas + DOM)
-A major principle of this project is **Canvas + DOM Separation**:
-- **Game World (Canvas)**: Built using **KAPLAY.js** (an HTML5 2D game engine). It handles player velocity, 4-directional walk animations, camera smooth-following, sprite rendering, and collision walls.
-- **Text & UI Overlays (DOM)**: Dense project descriptions, skill tags, retro dialogue boxes, and downloadable CV links are rendered in standard **HTML/CSS** on top of the canvas using **NES.css**. This ensures text is sharp, readable, responsive, accessible, and searchable by recruiters.
-- **Recruiter Fast-Path (Pokédex Menu)**: Recruiters can press `ESC` or click the persistent **Pokédex** button (`📕 POKÉDEX`) at the top-right to instantly teleport to any map zone or open resume details without walking!
+A plain-English tour of how the project works, how to change it, and where to learn more.
 
 ---
 
-## 📁 2. Folder & File Breakdown Explained Simply
+## 1. The big idea
 
-Here is every file and directory in your project directory:
+The portfolio is a tiny GBA-style game. You walk around **Upanshu Town**, enter buildings, and talk to people and objects. Each conversation can open an HTML panel with a project write-up or a résumé section.
+
+Three ideas hold it together:
+
+1. **The world is a grid.** Every map is 16×16-pixel tiles. The player moves one tile at a time, like in GBA-era handheld RPGs.
+2. **All art is code.** There are no PNG files. Tiles, buildings and characters are drawn pixel by pixel in TypeScript and turned into sprites when the page loads. That's why everything shares one palette and one outline colour.
+3. **Text lives in HTML, not the canvas.** The canvas draws the world. Dialogue, menus and panels are normal HTML/CSS on top, so they stay sharp, selectable and accessible.
+
+---
+
+## 2. How a frame of the game comes together
 
 ```
-Portfolio/
-├── index.html                  📄 HTML shell (Canvas + Retro DOM UI Overlays)
-├── package.json                ⚙️ Node dependencies & build scripts
-├── tsconfig.json               ⚙️ TypeScript configuration
-├── vite.config.ts              ⚙️ Vite build settings
-├── AGENTS.md                   🤖 AI agent rules and project guidelines
-├── HANDOFF.md                  📝 Project status & technical history
-├── PROJECT_LEARNING_GUIDE.md   📘 Beginner guide & roadmap (this document)
-├── scripts/
-│   ├── process-sprite.mjs      🖼️ Node script to remove magenta background from player sprite
-│   └── process-assets.mjs      🖼️ Node script to process & trim generated pixel-art PNGs
-├── public/
-│   └── assets/
-│       ├── resume/             📄 Downloadable CV PDF (upanshu-pandey-cv.pdf)
-│       └── sprites/            🎨 Pixel art PNG images (player, buildings, trees, fountain)
-└── src/
-    ├── main.ts                 🚀 Game engine entry point (KAPLAY map, collision walls, triggers)
-    ├── player.ts               🏃 Player movement, animations, joystick, & camera
-    ├── ui.ts                   🖥️ Retro dialogue box, modals, Pokédex menu, & Web Audio SFX
-    ├── content.ts              📖 Written project descriptions, education, & resume text
-    ├── zones.ts                📍 Coordinates table for teleportation & fast-travel
-    ├── counter.ts              🧪 Example Vite starter file
-    └── style.css               🎨 Retro styling (NES.css overrides, fonts, layout)
+content.ts ─────────────┐
+maps/*.ts (ASCII) ──► tilemap.ts ──► 3 pre-rendered ground images (for water/flower animation)
+art/*.ts (pixel code) ──┘                 + collision grid + "who talks here" grid
+                                                  │
+                                          world/scene.ts
+                          (player + NPC movement, warps, camera)
+                                                  │  press A while facing something
+                                          ui/interact.ts
+                          dialogue.ts → YES/NO → panel.ts / menu.ts
 ```
 
-### Detailed Breakdown of Key Source Files:
-
-#### 1. [`index.html`](file:///E:/Github/Personal%20Projects/Portfolio/index.html)
-* **What it does**: The HTML skeleton of the app.
-* **Key sections**:
-  * Loads retro Google Fonts (`Press Start 2P`, `Silkscreen`, `Pixelify Sans`) and `NES.css`.
-  * Contains `<canvas id="kaplay-canvas">` where KAPLAY draws the 2D world.
-  * Contains `<div id="ui-layer">` which houses the retro dialogue box, project detail modal, Pokédex fast-travel menu drawer, audio toggle button, and mobile touch joystick zone (`#joystick-zone`).
-
-#### 2. [`src/main.ts`](file:///E:/Github/Personal%20Projects/Portfolio/src/main.ts)
-* **What it does**: The heart of the 2D game world!
-* **Key functions**:
-  * Initializes the KAPLAY engine (`kaplay({ canvas, width: 480, height: 270, scale: 2 })`).
-  * Loads all sprite PNGs (`player`, `tree_oak`, `npc_guide`, `prof_lab`, `gym_frontend`, `gym_systems`, `fountain`, `signpost`).
-  * Constructs the ground layers (vibrant grass, sand paths, stone plaza, wood decking, industrial grid).
-  * Spawns buildings, signposts, trees, fountain, and the NPC guide sprite.
-  * Sets up solid collision walls (`wall(...)` and `Polygon` shapes) so the player cannot walk through buildings or outer world borders.
-  * Listens for `Spacebar` or `Enter` key presses to trigger interactions when near signs or NPCs.
-
-#### 3. [`src/player.ts`](file:///E:/Github/Personal%20Projects/Portfolio/src/player.ts)
-* **What it does**: Controls player spawning, movement physics, animations, and camera.
-* **Key functions**:
-  * `spawnPlayer()`: Adds the player sprite to KAPLAY, configures 4-way WASD/Arrow key movement (speed = 90), attaches a feet-only collision box (`k.area`), and locks the camera (`k.camPos`) onto the player.
-  * `initMobileJoystick()`: Uses **NippleJS** to render a virtual touch joystick on mobile screens (`< 768px`).
-  * `teleportPlayer()`: Instant teleport function used by the Pokédex menu.
-
-#### 4. [`src/ui.ts`](file:///E:/Github/Personal%20Projects/Portfolio/src/ui.ts)
-* **What it does**: Manages all HTML/CSS UI overlays and sound effects.
-* **Key functions**:
-  * `showDialogue()`: Plays a retro typewriter animation printing text character-by-character into the dialogue box.
-  * `openModal()` / `closeModal()`: Opens NES.css styled project description popups.
-  * `initPokedex()`: Powers the Pokédex fast-travel drawer so users can click any zone to teleport.
-  * `initAudioToggle()`: Contains a custom **Web Audio API synthesizer** that generates retro 8-bit sound effects (typewriter blips, modal open chimes, teleport SFX) without needing external audio files.
-
-#### 5. [`src/content.ts`](file:///E:/Github/Personal%20Projects/Portfolio/src/content.ts)
-* **What it does**: The single source of truth for all text content.
-* **Content stored**: Descriptions for Voyager Nepal & Agile Solutions work experience, Business Central ERP, ClickHouse analytics, .NET + React apps, Quantum RL dissertation, education at British College, skills summary, and downloadable CV PDF.
-
-#### 6. [`src/zones.ts`](file:///E:/Github/Personal%20Projects/Portfolio/src/zones.ts)
-* **What it does**: Stores `(X, Y)` map coordinates for the 4 zones (`town-square`, `gym-frontend`, `gym-systems`, `lab-about`) so the Pokédex menu knows exactly where to teleport the player.
-
-#### 7. [`src/style.css`](file:///E:/Github/Personal%20Projects/Portfolio/src/style.css)
-* **What it does**: Styles the DOM overlays with pixel-art NES.css themes, glassmorphism backdrops, responsive media queries, retro font styling, and touch joystick positioning.
-
-#### 8. [`scripts/process-assets.mjs`](file:///E:/Github/Personal%20Projects/Portfolio/scripts/process-assets.mjs)
-* **What it does**: A Node.js helper script using the `sharp` library. It scans generated pixel-art images, automatically strips magenta/white chromakey background colors to create pure transparent PNGs, and trims excess padding.
+### Key files
+| File | What it does |
+|---|---|
+| `src/art/pixel.ts` | A tiny RGBA buffer (`Pix`) with helpers: rectangles, ASCII grids, auto-shaded shapes. |
+| `src/art/tiles.ts` | Paints terrain. Paths and water look at their neighbours to draw edges ("autotiling"). |
+| `src/art/props.ts` | Buildings, trees, the fountain, furniture and project terminals. |
+| `src/art/characters.ts` | Walking characters drawn as ASCII grids. NPCs are palette swaps of one body. |
+| `src/world/maps/town.ts` | The town layout as text: `.` grass, `:` path, `~` water, `T` trees… |
+| `src/world/scene.ts` | Grid movement, NPC wandering, doors/warps with fades, camera clamping. |
+| `src/input.ts` | Turns keyboard/touch into GBA buttons. UI "handlers" sit on a stack so the player freezes while a menu is open. |
+| `src/ui/*.ts` | Text box, main menu, Project Log/Résumé panels, title screen, touch pad. |
+| `src/content.ts` | Every fact about Upanshu. Change it here and the panels update. |
 
 ---
 
-## 📚 3. Curated Learning Roadmap & Web Resources
+## 3. Common changes
 
-To build or customize a 2D RPG portfolio like this, here are the essential skills and top free resources to learn them:
+**Edit a project or your experience:** change `src/content.ts`.
 
-### 🌐 Skill 1: Modern HTML5, CSS3 & NES.css
-Learn how DOM elements overlay a canvas, how retro fonts work, and how NES.css creates 8-bit UI containers and buttons.
-* 📖 **[MDN Web Docs — HTML & CSS Basics](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web)**: The gold standard for web development fundamentals.
-* 🎨 **[NES.css Official Documentation](https://nostalgic-css.github.io/NES.css/)**: Learn how to use NES.css classes like `nes-btn`, `nes-container`, and `nes-dialog`.
-* 🔤 **[Google Fonts (Press Start 2P & Silkscreen)](https://fonts.google.com/)**: Free retro pixel fonts.
+**Change what an NPC says:** find the NPC in `src/world/maps/*.ts` and edit its `talk.say` lines. `\n` is a line break; each array item is one page.
 
-### ⚡ Skill 2: TypeScript & Vite
-TypeScript adds strong type checking to JavaScript, making game logic predictable and bug-free. Vite is the fast dev server and bundler.
-* 🚀 **[Vite Official Getting Started Guide](https://vitejs.dev/guide/)**: Understand how Vite serves your code locally with hot-module replacement.
-* 📘 **[TypeScript in 5 Minutes](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)**: Quick intro to TypeScript types, interfaces, and functions.
+**Add a project:**
+1. Add an entry to `PROJECTS` in `content.ts`.
+2. In `src/world/maps/interiors.ts`, add `kiosk("your-id", x, y, RAMP.teal)` to a workshop's `props` on a free floor tile.
 
-### 🕹️ Skill 3: 2D Web Game Development with KAPLAY.js
-KAPLAY.js (the official open-source successor to Kaboom.js) makes 2D game loops, sprite animations, and collisions easy.
-* 📖 **[KAPLAY.js Official Documentation](https://kaplayjs.com/)**: Complete API reference for `kaplay()`, `add()`, `sprite()`, `area()`, `body()`, and `scene()`.
-* 🧪 **[KAPLAYground (Interactive Code Examples)](https://play.kaplayjs.com/)**: Over 90 live interactive browser code snippets demonstrating player movement, map loading, and physics.
-* 🎥 **[JSLegendDev Game Dev with JavaScript & KAPLAY (YouTube)](https://www.youtube.com/@JSLegendDev)**: Excellent crash courses and tutorials on building 2D web games.
+**Tweak the art:**
+1. Edit colours in `src/art/palette.ts`, or drawing code in `tiles.ts`, `props.ts` or `characters.ts`.
+2. Run `npm run art:preview` and open `art-preview/map-town.png` to see the result without a browser.
 
-### 🎨 Skill 4: 2D Pixel Art & Asset Pipeline
-Understand how 16x16 tilesets, spritesheets, and walk cycles work.
-* 🏰 **[Kenney.nl Free 2D Asset Packs](https://kenney.nl)**: Thousands of free, CC0 public domain 2D tilesets (Tiny Town, RPG urban sets, characters).
-* 🧙‍♂️ **[Universal LPC Spritesheet Generator](https://sanderfrenken.github.io/Universal-LPC-Spritesheet-Character-Generator/)**: Create custom 4-way top-down walk cycle character spritesheets.
-* 🖌️ **[Aseprite](https://www.aseprite.org/)**: The premier pixel art editor and animated sprite tool.
-
-### 🔊 Skill 5: Web Audio API & Sound Synth
-Learn how to create retro sound effects directly in code without loading `.mp3` files.
-* 🎵 **[MDN Web Audio API Guide](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)**: Learn how `AudioContext`, `OscillatorNode`, and `GainNode` create sound synth blips.
-* 🎼 **[BeepBox Chiptune Tracker](https://www.beepbox.co/)**: In-browser tool for composing retro 8-bit background music.
+**Change the map:** edit the ASCII rows in `town.ts`. Keep every row the same length, and keep trees (`T`) in 2×2 blocks.
 
 ---
 
-## 🛠️ 4. How To Run & Experiment With Your Project
+## 4. Running it
 
-### 1. Run the Development Server
-Open your terminal in the project folder and run:
 ```bash
-npm run dev
-```
-Open `http://localhost:5173/` in your browser. Any change you save in `src/` will instantly update on screen!
-
-### 2. Test Production Build
-To check if your code compiles without TypeScript errors:
-```bash
-npm run build
+npm install
+npm run dev          # live-reloading dev server at http://localhost:5173
+npm run build        # type-check + production build into dist/
+npm run preview      # serve dist/ locally
+npm run art:preview  # render the art to PNGs
 ```
 
-### 3. How to Make Common Customizations
-* **Edit Project Text**: Open [`src/content.ts`](file:///E:/Github/Personal%20Projects/Portfolio/src/content.ts) and modify any text string inside `CONTENT_DATA`.
-* **Add a New Building or Sign**: Open [`src/main.ts`](file:///E:/Github/Personal%20Projects/Portfolio/src/main.ts), add a sprite or tile, and add an entry to the `triggers` array.
-* **Adjust Character Movement**: Open [`src/player.ts`](file:///E:/Github/Personal%20Projects/Portfolio/src/player.ts) and tweak `SPEED` or `TARGET_PX`.
+Pushing to `master` deploys to GitHub Pages through `.github/workflows/deploy.yml`.
 
 ---
 
-> 💡 *This file serves as a complete reference for your portfolio project. You can review it anytime to understand how the components fit together or when learning the underlying web technologies!*
+## 5. Learning resources
+
+- **KAPLAY.js:** [docs](https://kaplayjs.com/) and the [KAPLAYground examples](https://play.kaplayjs.com/)
+- **TypeScript:** [TypeScript in 5 minutes](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)
+- **Vite:** [getting started](https://vitejs.dev/guide/)
+- **Pixel art:** [Lospec palettes & tutorials](https://lospec.com/) and [Aseprite](https://www.aseprite.org/) for sketching before coding
+- **Web Audio:** [MDN Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+- **CSS container queries** (how the text box scales with the screen): [MDN guide](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries)
