@@ -35,6 +35,7 @@ export interface Project {
   body: string[];         // paragraphs
   highlights: string[];
   tags: string[];
+  pdf?: { label: string; path: string };   // supporting document, opened in a new tab
 }
 
 export const PROJECTS: Project[] = [
@@ -77,21 +78,26 @@ export const PROJECTS: Project[] = [
   {
     id: "quantum",
     title: "Quantum RL Circuit Optimizer",
-    short: "PPO agent that learns to build quantum circuits",
+    short: "PPO agent that learns circuits matching a hidden bit string",
     building: "web",
     categories: ["AI", "WEB"],
     when: "BSc dissertation · 2023 · First Class",
     body: [
-      "My dissertation project: a web app that optimises quantum circuit creation for the Bernstein–Vazirani algorithm.",
-      "A Proximal Policy Optimization (PPO) reinforcement-learning agent learns to build the circuits, working against a quantum simulation built with Qiskit.",
-      "The app itself is written in Python with Streamlit.",
+      "My final-year dissertation, \"Quantum Reinforcement Learning for Quantum Circuit Optimization\": training a reinforcement-learning agent to generate quantum circuits that match a given hidden bit string, the problem behind the Bernstein–Vazirani algorithm.",
+      "I built a custom Gym environment around Qiskit. Each episode builds the circuit (CX entangling gates driven by the hidden string, a Hadamard gate on every qubit, then measurement), runs it on Qiskit Aer's statevector simulator and gives the agent the measurement probabilities as its observation. The agent acts on individual qubits, and the reward is the probability-weighted share of bits that match the hidden string.",
+      "The policy was trained with Proximal Policy Optimization (PPO) from Stable Baselines3 using an MLP policy, with a custom callback tracking reward and success rate during training.",
+      "A Streamlit app loads the trained model: enter a hidden bit string and watch the agent work through the circuit, with the reward and a rendered circuit diagram at every step.",
+      "The thesis also covers the alternatives I evaluated (TensorFlow Quantum, Microsoft's QDK) and future work such as other RL algorithms (DQN, A2C) and running on real quantum hardware.",
     ],
     highlights: [
-      "Reinforcement learning with Proximal Policy Optimization",
-      "Quantum circuits built and simulated with Qiskit",
-      "Streamlit web app; graded First Class",
+      "Custom Gym environment over Qiskit Aer's statevector simulator",
+      "PPO agent (Stable Baselines3) with a bit-match reward function",
+      "Reward and success-rate tracking through a training callback",
+      "Interactive Streamlit app with live circuit diagrams",
+      "Graded First Class",
     ],
-    tags: ["Python", "Qiskit", "PPO", "Streamlit"],
+    tags: ["Python", "Qiskit", "Stable Baselines3", "PPO", "Gym", "Streamlit"],
+    pdf: { label: "Read the thesis (PDF)", path: "assets/thesis/upanshu-pandey-qrl-thesis.pdf" },
   },
   {
     id: "ai-data",

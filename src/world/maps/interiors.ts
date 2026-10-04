@@ -51,7 +51,7 @@ export const lab: MapDef = {
     { kind: "plant", x: 12, y: 1 },
     { kind: "rug", x: 5, y: 3 },
     { kind: "desk", x: 5, y: 5, opts: { item: "cv" },
-      talk: { say: ["A laptop and a freshly printed stack of\npages. The top one reads \"CV\"."], then: { kind: "resume" }, ask: "Download Upanshu's CV (PDF)?" } },
+      talk: { say: ["A laptop and a freshly printed stack of\npages. The top one reads \"CV\"."], then: { kind: "resume" }, ask: "Open Upanshu's CV (PDF)?" } },
     { kind: "desk", x: 9, y: 6, opts: { item: "papers" },
       talk: { say: ["Research notes on columnar databases.\nA sticky note says: \"ORDER BY matters!\""] } },
     { kind: "plant", x: 0, y: 7 },

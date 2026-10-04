@@ -21,13 +21,12 @@ export function resumeUrl(): string {
   return asset(PROFILE.resume);
 }
 
-export function downloadResume(): void {
-  const a = document.createElement("a");
-  a.href = resumeUrl();
-  a.download = "Upanshu-Pandey-CV.pdf";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+/** Open the CV PDF in a new browser tab. Returns false if a popup blocker stopped it. */
+export function openResumePdf(): boolean {
+  const w = window.open(resumeUrl(), "_blank");
+  if (!w) return false;
+  w.opener = null;
+  return true;
 }
 
 // ── HTML builders ───────────────────────────────────────────────
@@ -42,7 +41,8 @@ function projectHTML(p: Project): string {
     ${p.body.map((b) => `<p>${esc(b)}</p>`).join("")}
     <h3>Highlights</h3>
     <ul class="bullets">${p.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
-    <div class="chips">${p.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>`;
+    <div class="chips">${p.tags.map((t) => `<span>${esc(t)}</span>`).join("")}</div>
+    ${p.pdf ? `<a class="pixel-btn" href="${asset(p.pdf.path)}" target="_blank" rel="noopener">${esc(p.pdf.label)}</a>` : ""}`;
 }
 
 function experienceHTML(): string {
@@ -71,7 +71,7 @@ function contactHTML(): string {
       <li><span>BASED IN</span>${esc(PROFILE.location)}</li>
       <li><span>STATUS</span>${esc(PROFILE.status)}</li>
     </ul>
-    <a class="pixel-btn" href="${resumeUrl()}" download="Upanshu-Pandey-CV.pdf">⬇ Download CV (PDF)</a>`;
+    <a class="pixel-btn" href="${resumeUrl()}" target="_blank" rel="noopener">Open CV (PDF)</a>`;
 }
 
 const INFO: Record<PanelId, { title: string; html: () => string }> = {
@@ -169,6 +169,7 @@ function show(view: View): Promise<void> {
       pop();
       $("panel-close").removeEventListener("click", onClose);
       root.removeEventListener("click", onBackdrop);
+      root.removeEventListener("pointerdown", onDown);
       sfx.cancel();
       depth--;
       if (depth === 0) {
@@ -178,7 +179,11 @@ function show(view: View): Promise<void> {
       resolve();
     };
     const onClose = () => { if (!busy) close(); };
-    const onBackdrop = (e: MouseEvent) => { if (e.target === root && !busy) close(); };
+    // Only a tap that both starts and ends on the backdrop closes it: the touch A button
+    // opens panels on pointerdown, and its trailing click would otherwise land here.
+    let downOnBackdrop = false;
+    const onDown = (e: PointerEvent) => { downOnBackdrop = e.target === root; };
+    const onBackdrop = (e: MouseEvent) => { if (e.target === root && downOnBackdrop && !busy) close(); };
 
     const pop = pushHandler((btn) => {
       if (btn === "b" || btn === "start") return close();
@@ -198,6 +203,7 @@ function show(view: View): Promise<void> {
 
     $("panel-close").addEventListener("click", onClose);
     root.addEventListener("click", onBackdrop);
+    root.addEventListener("pointerdown", onDown);
     sfx.open();
     render();
   });

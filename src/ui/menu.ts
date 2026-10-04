@@ -1,11 +1,11 @@
 // src/ui/menu.ts
 // ─── Main menu (ESC / MENU button): the recruiter fast path ───
-// PROJECTS · RÉSUMÉ · MAP (quick travel) · CV download · sound
+// PROJECTS · RÉSUMÉ · MAP (quick travel) · CV (opens in a new tab) · sound
 
 import { pushHandler } from "../input.ts";
 import { sfx, toggleMute } from "../audio.ts";
 import { isMuted } from "../state.ts";
-import { openProjects, openResume, downloadResume } from "./panel.ts";
+import { openProjects, openResume, openInfo, openResumePdf } from "./panel.ts";
 import { say } from "./dialogue.ts";
 import type { MapId } from "../world/types.ts";
 
@@ -33,9 +33,14 @@ export function menuOpen(): boolean {
 }
 
 export async function getCv(): Promise<void> {
-  downloadResume();
-  sfx.jingle();
-  await say(["Upanshu's CV is on its way!\n(Check your downloads.)"]);
+  if (openResumePdf()) {
+    sfx.jingle();
+    await say(["Upanshu's CV is on its way!\n(It opened in a new tab.)"]);
+    return;
+  }
+  // Popup blocked: fall back to the contact page, whose CV link is a plain tap.
+  await say(["Your browser blocked the new tab.\nTap \"Open CV\" on the next page."]);
+  await openInfo("contact");
 }
 
 /** Show a list menu in the box; resolves with the picked index or -1. */
@@ -91,7 +96,7 @@ export async function openMenu(): Promise<void> {
       travel(DESTINATIONS[i]!);
       return true;   // close the menu
     } },
-    { label: () => "GET CV (PDF)", hint: "Download Upanshu's CV.", run: async () => { await getCv(); return true; } },
+    { label: () => "GET CV (PDF)", hint: "Open Upanshu's CV in a new tab.", run: async () => { await getCv(); return true; } },
     { label: () => `SOUND: ${isMuted() ? "OFF" : "ON"}`, hint: "Toggle music and sound effects.", run: () => { toggleMute(); } },
     { label: () => "EXIT", hint: "Back to exploring.", run: () => true },
   ];
