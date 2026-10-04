@@ -15,7 +15,7 @@ export const PROFILE = {
   summary:
     "Technical Consultant and Full-Stack Developer with nearly four years of experience across " +
     "Microsoft Dynamics 365 Business Central, LS Retail and full-stack .NET and React development. " +
-    "At Voyager Nepal I was a core developer on Aurora BI, an AI analytics platform for Business Central: " +
+    "At Voyager Nepal I was a core developer on an AI analytics platform for Business Central: " +
     "natural-language queries, a RAG knowledge base on Qdrant, a ClickHouse warehouse and a Python ML service. " +
     "I like the unglamorous parts too: integrations, databases and servers that keep production running.",
 };
@@ -42,22 +42,46 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
-    id: "fullstack",
-    title: "Full-Stack Business Applications",
-    short: "C# and React applications, including an Azure-hosted app",
+    id: "analytics-ui",
+    title: "Analytics Platform Front End",
+    short: "React/TypeScript dashboards, AI query screens and admin tools",
     building: "web",
-    categories: ["WEB"],
-    when: "Voyager Nepal · 2024–2026",
+    categories: ["WEB", "AI"],
+    when: "Voyager Nepal · 2026",
     body: [
-      "At Voyager Nepal I developed full-stack applications with a C# (.NET) backend and a React front end.",
-      "I also worked on an application hosted on Azure, alongside the containerised services (Qdrant, Redis, ClickHouse) that backed our enterprise tooling.",
+      "The web front end of the AI analytics platform for Business Central (its backend lives in Systems Works), built with React, TypeScript, TanStack Query, Tailwind CSS and ECharts.",
+      "I built the screens people use every day: interactive dashboards with drill-down charts and per-widget or global date ranges, a KPI scorecard with red/amber/green status, plain-English query results, and machine-learning training and analysis views.",
+      "I also built the screens that drive the data pipeline: schema harvesting, automatic table classification, warehouse design, ETL run history and the RAG knowledge-base seeding status.",
+      "For administrators there's an admin dashboard with health checks, a seven-tab settings page with super-admin platform settings, an organisation page for divisions and roles with ECharts tree diagrams, and an escalation workflow UI.",
     ],
     highlights: [
-      "Full-stack development in C# and React",
-      "Work on an Azure-hosted application",
-      "Built alongside Business Central consultancy for the same clients",
+      "Dashboards with drill-down charts and date-range controls",
+      "KPI scorecard, plain-English query and ML analysis screens",
+      "Data-pipeline UI: harvesting, classification, warehouse design, ETL history",
+      "Admin dashboard, settings, organisation and escalation pages",
     ],
-    tags: ["C#", ".NET", "React", "Azure", "Docker"],
+    tags: ["React", "TypeScript", "TanStack Query", "Tailwind CSS", "ECharts"],
+  },
+  {
+    id: "saas-platform",
+    title: "SaaS Platform: Identity, Connectors & Admin",
+    short: ".NET identity and data-connector services with a React admin app",
+    building: "web",
+    categories: ["WEB", "API"],
+    when: "Voyager Nepal · 2026",
+    body: [
+      "Shared platform services behind the analytics product, written in C# on .NET with a command/query (MediatR) structure, FluentValidation and EF Core.",
+      "The identity service handles login, authorization, roles and groups, user management and two-factor authentication.",
+      "The connector service manages connections to customers' data, with connection pooling, a connector marketplace and schema governance. Its providers cover SQL Server, PostgreSQL, MySQL, MariaDB and Oracle, NoSQL stores (document, graph, key-value, wide-column), cloud storage (Amazon S3, Azure Blob, Google Cloud Storage, MinIO) and streams (Kafka, Azure Event Hubs, Kinesis).",
+      "I also built the matching React 19 + TypeScript admin app: roles and permissions, user management, invitations, billing and subscriptions, and the connector marketplace.",
+    ],
+    highlights: [
+      "Identity: login, authorization, roles and groups, 2FA",
+      "Connectors for relational, NoSQL, cloud-storage and streaming sources",
+      "Connection pooling, marketplace and schema governance",
+      "React admin app: roles, users, invitations, billing",
+    ],
+    tags: ["C#", ".NET", "MediatR", "EF Core", "React", "TypeScript"],
   },
   {
     id: "ecommerce",
@@ -102,26 +126,28 @@ export const PROJECTS: Project[] = [
     pdf: { label: "Read the thesis (PDF)", path: "assets/thesis/upanshu-pandey-qrl-thesis.pdf" },
   },
   {
-    id: "aurora",
-    title: "Aurora BI: AI Analytics for Business Central",
-    short: "ERP database in; warehouse, dashboards, plain-English answers and forecasts out",
+    id: "analytics",
+    title: "AI Analytics Platform for Business Central",
+    short: "ERP database in; warehouse, plain-English answers and forecasts out",
     building: "systems",
-    categories: ["AI", "DATA", "WEB"],
+    categories: ["AI", "DATA"],
     when: "Voyager Nepal · 2026",
     body: [
-      "Aurora BI is a multi-tenant analytics platform for Microsoft Dynamics 365 Business Central and LS Retail. Point it at a client's ERP database and AI reads the schema, designs a ClickHouse warehouse, builds the ETL, generates dashboards and answers questions asked in plain English.",
-      "I was a core developer and the top contributor to both the .NET backend and the React/TypeScript frontend. I built the natural-language query engine, which has an LLM write ClickHouse SQL, repairs failed queries automatically and guards against SQL injection, and the RAG knowledge base, which parses Business Central .app files into embeddings in a Qdrant vector database.",
+      "A multi-tenant analytics platform for Microsoft Dynamics 365 Business Central and LS Retail. Point it at a client's ERP database and AI reads the schema, designs a ClickHouse warehouse, builds the ETL, generates dashboards and answers questions asked in plain English. (Its web front end and platform services are in the Web Workshop.)",
+      "I was a core developer on the .NET backend. I built the natural-language query engine, which has an LLM write ClickHouse SQL, repairs failed queries automatically and guards against SQL injection, and the RAG knowledge base, which parses Business Central .app files into embeddings in a Qdrant vector database.",
       "I also worked on the Python/FastAPI ML service (Prophet forecasting, Celery training jobs), large-table and Azure Data Lake (bc2adls) ETL, and the SaaS layer: subscription tiers with usage metering, bring-your-own AI keys, KPI targets with red/amber/green status, alert digests and an escalation workflow.",
-      "Later I migrated the platform from SQL Server to PostgreSQL and added OpenTelemetry observability, Hangfire background jobs and caching. Before Aurora BI, I built data-source connectors and identity services (authentication, roles, 2FA) in C# and React for the wider Aurora platform.",
+      "I hosted it on Azure first, publishing the ASP.NET Core API from Visual Studio to IIS with an Azure SQL database, then moved it to a Docker Compose deployment on a Linux VPS (see Databases & Infrastructure). I also migrated the platform from SQL Server to PostgreSQL and added OpenTelemetry observability, Hangfire background jobs and caching.",
     ],
     highlights: [
       "Natural-language → ClickHouse SQL with self-healing retries",
       "RAG over Business Central .app files on Qdrant (batched seeding: ~8,000 → ~80 calls)",
       "Python ML service: Prophet forecasting and Celery training jobs",
       "SaaS features: tiers, usage metering, bring-your-own AI keys, KPIs and escalations",
-      "SQL Server → PostgreSQL migration; OpenTelemetry, Hangfire, caching",
+      "Hosted on Azure (IIS + Azure SQL), then Docker on a Linux VPS",
+      "SQL Server → PostgreSQL migration",
+      "OpenTelemetry observability, Hangfire jobs, caching",
     ],
-    tags: [".NET", "React", "TypeScript", "Python", "ClickHouse", "Qdrant", "PostgreSQL", "LLMs"],
+    tags: [".NET", "Python", "ClickHouse", "Qdrant", "PostgreSQL", "Azure", "LLMs"],
   },
   {
     id: "bc-erp",
@@ -147,21 +173,25 @@ export const PROJECTS: Project[] = [
   {
     id: "infra",
     title: "Databases & Infrastructure",
-    short: "Docker services, SQL Server, triggers, SSL and on-prem servers",
+    short: "Docker VPS deployment, Azure/IIS hosting, SQL Server, SSL and on-prem servers",
     building: "systems",
     categories: ["INFRA", "DATA"],
     when: "Agile Solutions & Voyager Nepal · 2022–2026",
     body: [
-      "At Voyager Nepal I maintained the Docker containers running Qdrant, Redis, ClickHouse and other services.",
+      "At Voyager Nepal I deployed the AI analytics platform to an Ubuntu VPS with Docker Compose: the .NET API with the React app baked into its image, the Python ML service, and ClickHouse, SQL Server, Qdrant, Typesense, Redis and Ollama, behind an nginx reverse proxy that terminates TLS.",
+      "I wrote the deploy scripts for it. Each one backs up the running container, swaps in the new build, health-checks it and rolls back automatically on failure, and every release is committed as a versioned image so earlier versions stay one command away. I also untangled a dependency conflict that made the ML image unbuildable, by building from a frozen, consistent package set.",
+      "Before the VPS, I hosted the platform on Azure: the ASP.NET Core API published from Visual Studio to IIS, with an Azure SQL database.",
       "At Agile Solutions I created and managed databases and database triggers for data security, created and managed SSL certificates, and handled server and network issues on clients' on-premise servers.",
       "The code base lived in GitHub repositories that I managed.",
     ],
     highlights: [
-      "Docker containers for Qdrant, Redis and ClickHouse",
+      "Docker Compose VPS deployment behind nginx with TLS",
+      "Deploy scripts with backups, health checks and automatic rollback",
+      "Azure hosting: ASP.NET Core on IIS with Azure SQL",
       "Databases and triggers for data security",
       "SSL certificates and on-premise server support",
     ],
-    tags: ["Docker", "SQL Server", "PL/SQL", "Redis", "ClickHouse", "GitHub", "SSL"],
+    tags: ["Docker", "nginx", "Linux", "Azure", "IIS", "SQL Server", "PL/SQL", "GitHub", "SSL"],
   },
 ];
 
@@ -178,12 +208,12 @@ export const EXPERIENCE: Job[] = [
     when: "Oct 2024 – Jun 2026",
     roles: [{ title: "Technical Consultant", when: "Oct 2024 – Jun 2026" }],
     points: [
-      "Core developer and top contributor on Aurora BI, an AI analytics platform for Business Central and LS Retail (.NET, React/TypeScript, Python): it reads a client's ERP schema, designs a ClickHouse warehouse, builds the ETL and dashboards, and answers plain-English questions.",
+      "Core developer on an AI analytics platform for Business Central and LS Retail (.NET, React/TypeScript, Python): it reads a client's ERP schema, designs a ClickHouse warehouse, builds the ETL and dashboards, and answers plain-English questions.",
       "Built its natural-language query engine (LLM-generated ClickHouse SQL with self-healing retries and SQL-injection guards) and a RAG knowledge base that parses Business Central .app files into Qdrant embeddings.",
       "Developed the Python/FastAPI ML service (Prophet forecasting, Celery training jobs), plus SaaS and reporting features: multi-tenancy, subscription tiers and usage metering, KPI targets, alert digests and escalation workflows.",
-      "Migrated the platform from SQL Server to PostgreSQL and added OpenTelemetry observability, Hangfire background jobs and caching; built data-source connectors and identity services (authentication, roles, 2FA).",
+      "Migrated the platform from SQL Server to PostgreSQL and added OpenTelemetry observability, Hangfire background jobs and caching; built its React/TypeScript dashboards and admin screens, plus .NET data-source connectors and identity services (authentication, roles, 2FA).",
       "Upgraded LS Retail customisations to Business Central 27 / LS Central 27.1 for a Middle East retail group, built an Azure OpenAI retail-insights chatbot inside Business Central, and developed capex controls, job card extensions and VAT reports.",
-      "Maintained Docker containers running Qdrant, Redis, ClickHouse and other services, and worked on an Azure-hosted application.",
+      "Hosted the platform on Azure (ASP.NET Core on IIS, Azure SQL), then deployed it to a Linux VPS with Docker Compose and nginx, writing deploy scripts with health checks and automatic rollback; maintained the containers running Qdrant, Redis, ClickHouse and other services.",
     ],
   },
   {
@@ -217,7 +247,7 @@ export const SKILLS: { group: string; items: string[] }[] = [
   { group: "Frontend", items: ["React", "TypeScript", "HTML", "CSS"] },
   { group: "Backend & Frameworks", items: [".NET (ASP.NET Core, EF Core)", "FastAPI", "Laravel"] },
   { group: "Databases", items: ["SQL Server", "PostgreSQL", "ClickHouse", "Redis", "Qdrant (vector DB)"] },
-  { group: "Cloud & DevOps", items: ["Azure", "Azure DevOps", "Docker", "GitHub", "Hangfire", "OpenTelemetry", "SSL certificate management"] },
+  { group: "Cloud & DevOps", items: ["Azure", "IIS", "Docker", "nginx", "Linux", "Azure DevOps", "GitHub", "Hangfire", "OpenTelemetry", "SSL certificate management"] },
   { group: "AI / Machine Learning", items: ["LLM integration (Claude, DeepSeek, Azure OpenAI)", "RAG systems", "Prophet", "Scikit-Learn", "TensorFlow", "Pandas", "NumPy", "Qiskit"] },
   { group: "ERP", items: ["Microsoft Dynamics 365 Business Central", "LS Retail (LS Central)", "Dynamics NAV (C/AL)"] },
 ];

@@ -20,8 +20,8 @@ A full-page, GBA-era-style town explored tile by tile, with enterable buildings,
 
 **Source of truth for facts:** the CV source `resume/cv.html`, the dissertation, and Upanshu's own work repos. Keep site content traceable to them, and describe clients generically, never by name.
 
-**Experience:** Technical Consultant, Voyager Nepal (Oct 2024 – Jun 2026): Aurora BI (AI analytics platform for BC/LS Retail: NLP→ClickHouse SQL, RAG on Qdrant, Python ML service, Postgres migration), LS Retail BC 27 upgrade, Azure OpenAI chatbot in BC, Docker services, BC consultancy · Agile Solutions (Aug 2022 – Oct 2024): Jr. Technical Consultant, Associate Technical Consultant, Technical Trainee (IRD localisation/TDS, hospital NAV ↔ health insurance FHIR integration, warehouse extensions).
-**Projects on the site:** Full-Stack Business Applications, E-Commerce Website (Laravel), Quantum RL Circuit Optimizer (Web Workshop) · Aurora BI, Business Central ERP Consulting, Databases & Infrastructure (Systems Works).
+**Experience:** Technical Consultant, Voyager Nepal (Oct 2024 – Jun 2026): AI analytics platform for BC/LS Retail (backend: NLP→ClickHouse SQL, RAG on Qdrant, Python ML service, Azure hosting (IIS + Azure SQL) then Docker Compose VPS deploy, Postgres migration; React front end; .NET identity + connector services), LS Retail BC 27 upgrade, Azure OpenAI chatbot in BC, Docker services, BC consultancy · Agile Solutions (Aug 2022 – Oct 2024): Jr. Technical Consultant, Associate Technical Consultant, Technical Trainee (IRD localisation/TDS, hospital NAV ↔ health insurance FHIR integration, warehouse extensions).
+**Projects on the site:** Analytics Platform Front End, SaaS Platform (identity, connectors, admin), E-Commerce Website (Laravel), Quantum RL Circuit Optimizer (Web Workshop) · AI Analytics Platform, Business Central ERP Consulting, Databases & Infrastructure (Systems Works).
 **Education:** BSc Computing (Hons), First Class, The British College (2020–2023) · A-Levels, GIHE (2017–2019).
 
 ## File map

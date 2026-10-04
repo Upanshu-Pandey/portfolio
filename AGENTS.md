@@ -45,8 +45,8 @@ An interactive top-down portfolio for **Upanshu Pandey** in the visual style of 
 |---|---|---|
 | Upanshu Town (spawn) | `town` | Welcome sign, guide, fountain plaza, pond + pier, tall grass, ledge, north road sign |
 | Pine Research Lab | `lab` | Dr. Pine (About), bookshelves (Skills), diploma (Education), PC (Experience), CV desk (opens PDF), assistant (Contact), server racks (Quantum project) |
-| Web Workshop | `webWorkshop` | Lead engineer + kiosks: Full-Stack Apps, E-Commerce, Quantum RL |
-| Systems Works | `systemsWorks` | Lead engineer + kiosks: Aurora BI, Business Central ERP, Databases & Infra |
+| Web Workshop | `webWorkshop` | Lead engineer + kiosks: Analytics Front End, SaaS Platform, E-Commerce, Quantum RL |
+| Systems Works | `systemsWorks` | Lead engineer + kiosks: AI Analytics Platform, Business Central ERP, Databases & Infra |
 | Upanshu's House | `house` | Mom (Contact), flavour objects |
 
 ## Adding things

@@ -96,7 +96,8 @@ export const webWorkshop: MapDef = {
     { kind: "plant", x: 0, y: 1 },
     { kind: "plant", x: 10, y: 1 },
     { kind: "rug", x: 4, y: 2 },
-    kiosk("fullstack", 2, 4, RAMP.teal),
+    kiosk("analytics-ui", 2, 4, RAMP.teal),
+    kiosk("saas-platform", 2, 7, RAMP.navy),
     kiosk("quantum", 8, 4, RAMP.purple),
     kiosk("ecommerce", 8, 7, RAMP.orange),
     { kind: "sofa", x: 0, y: 7, talk: { say: ["A comfy sofa for code reviews.\nThere's a rubber duck between the cushions."] } },
@@ -110,7 +111,7 @@ export const webWorkshop: MapDef = {
       talk: {
         say: [
           "Welcome to the WEB WORKSHOP!\nI'm the lead engineer around here.",
-          "This is where the web and full-stack work\nlives: C# and React apps, a Laravel store…\nand even a quantum-computing experiment!",
+          "This is where the web and full-stack work\nlives: React dashboards, .NET SaaS services,\na Laravel store… and a quantum experiment!",
           "Each kiosk covers one project,\nor I can show you the whole list.",
         ],
         then: { kind: "hall", building: "web" },
@@ -133,7 +134,7 @@ export const systemsWorks: MapDef = {
     { kind: "banner", x: 7, y: 0, opts: { glow: RAMP.navy, label: "AI" } },
     { kind: "rug", x: 4, y: 2 },
     kiosk("bc-erp", 2, 4, RAMP.orange),
-    kiosk("aurora", 8, 4, RAMP.purple),
+    kiosk("analytics", 8, 4, RAMP.purple),
     kiosk("infra", 2, 7, RAMP.teal),
     ...[8, 9, 10].map((x): PropDef => ({ kind: "server", x, y: 7,
       talk: { say: ["A rack of servers hums quietly.\nEvery status light is green."] } })),
@@ -146,7 +147,7 @@ export const systemsWorks: MapDef = {
       talk: {
         say: [
           "You found SYSTEMS WORKS!",
-          "We handle ERP, AI and infrastructure here:\nBusiness Central, the Aurora BI platform,\nDocker services and SQL Server.",
+          "We handle ERP, AI and infrastructure here:\nBusiness Central, an AI analytics platform,\nDocker services and SQL Server.",
           "It's not flashy, but it's what keeps\nproduction running!",
         ],
         then: { kind: "hall", building: "systems" },
