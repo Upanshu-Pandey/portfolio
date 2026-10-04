@@ -1,7 +1,8 @@
 // src/content.ts
 // ─── Single source of truth for everything the portfolio says ───
 // Panels, the project list, the résumé and the <noscript> fallback all read from here.
-// Source: "Upanshu Pandey CV 2026". Keep every claim traceable to the CV.
+// Source: the CV (public/assets/resume, built from resume/cv.html) and Upanshu's own work repos.
+// Keep every claim traceable to those. Clients are described generically, never by name.
 
 export const PROFILE = {
   name: "Upanshu Pandey",
@@ -13,8 +14,9 @@ export const PROFILE = {
   resume: "assets/resume/upanshu-pandey-cv.pdf",
   summary:
     "Technical Consultant and Full-Stack Developer with nearly four years of experience across " +
-    "Microsoft Dynamics 365 Business Central, full-stack C# and React applications, and AI and data work: " +
-    "a RAG pipeline on a Qdrant vector database and machine learning forecasting models in Python. " +
+    "Microsoft Dynamics 365 Business Central, LS Retail and full-stack .NET and React development. " +
+    "At Voyager Nepal I was a core developer on Aurora BI, an AI analytics platform for Business Central: " +
+    "natural-language queries, a RAG knowledge base on Qdrant, a ClickHouse warehouse and a Python ML service. " +
     "I like the unglamorous parts too: integrations, databases and servers that keep production running.",
 };
 
@@ -100,41 +102,47 @@ export const PROJECTS: Project[] = [
     pdf: { label: "Read the thesis (PDF)", path: "assets/thesis/upanshu-pandey-qrl-thesis.pdf" },
   },
   {
-    id: "ai-data",
-    title: "RAG Pipeline & Forecasting for Business Central",
-    short: "Enterprise data → Qdrant embeddings for a chatbot, plus ML forecasts",
+    id: "aurora",
+    title: "Aurora BI: AI Analytics for Business Central",
+    short: "ERP database in; warehouse, dashboards, plain-English answers and forecasts out",
     building: "systems",
-    categories: ["AI", "DATA"],
-    when: "Voyager Nepal · 2024–2026",
+    categories: ["AI", "DATA", "WEB"],
+    when: "Voyager Nepal · 2026",
     body: [
-      "I built a retrieval-augmented generation (RAG) pipeline that extracted business intelligence from Business Central .app files and stored the embeddings in a Qdrant vector database, giving a chatbot under development access to enterprise data.",
-      "For the same enterprise systems, I developed machine learning models in Python to forecast data.",
+      "Aurora BI is a multi-tenant analytics platform for Microsoft Dynamics 365 Business Central and LS Retail. Point it at a client's ERP database and AI reads the schema, designs a ClickHouse warehouse, builds the ETL, generates dashboards and answers questions asked in plain English.",
+      "I was a core developer and the top contributor to both the .NET backend and the React/TypeScript frontend. I built the natural-language query engine, which has an LLM write ClickHouse SQL, repairs failed queries automatically and guards against SQL injection, and the RAG knowledge base, which parses Business Central .app files into embeddings in a Qdrant vector database.",
+      "I also worked on the Python/FastAPI ML service (Prophet forecasting, Celery training jobs), large-table and Azure Data Lake (bc2adls) ETL, and the SaaS layer: subscription tiers with usage metering, bring-your-own AI keys, KPI targets with red/amber/green status, alert digests and an escalation workflow.",
+      "Later I migrated the platform from SQL Server to PostgreSQL and added OpenTelemetry observability, Hangfire background jobs and caching. Before Aurora BI, I built data-source connectors and identity services (authentication, roles, 2FA) in C# and React for the wider Aurora platform.",
     ],
     highlights: [
-      "Extraction from Business Central .app files",
-      "Embeddings stored in Qdrant (vector database)",
-      "Python ML forecasting models for the same systems",
+      "Natural-language → ClickHouse SQL with self-healing retries",
+      "RAG over Business Central .app files on Qdrant (batched seeding: ~8,000 → ~80 calls)",
+      "Python ML service: Prophet forecasting and Celery training jobs",
+      "SaaS features: tiers, usage metering, bring-your-own AI keys, KPIs and escalations",
+      "SQL Server → PostgreSQL migration; OpenTelemetry, Hangfire, caching",
     ],
-    tags: ["Python", "RAG", "Qdrant", "Business Central"],
+    tags: [".NET", "React", "TypeScript", "Python", "ClickHouse", "Qdrant", "PostgreSQL", "LLMs"],
   },
   {
     id: "bc-erp",
     title: "Business Central ERP Consulting",
-    short: "Customisations, integrations and AMC support for clients",
+    short: "Customisations, integrations, upgrades and AMC support for clients",
     building: "systems",
     categories: ["ERP", "API"],
     when: "Agile Solutions & Voyager Nepal · 2022–2026",
     body: [
       "Across both roles I provided technical consultancy on Microsoft Dynamics 365 Business Central and developed customisations to client specifications, in AL and C/AL.",
-      "I created and consumed APIs to integrate data between cloud and on-premise environments, sync POS systems to the database, and meet IRD (Inland Revenue Department) requirements.",
-      "Under Annual Maintenance Contracts I maintained and configured clients' Business Central and SQL Server instances.",
+      "For a Middle East retail and distribution group I upgraded LS Retail customisations to Business Central 27 / LS Central 27.1 (POS receipt printing, buying management), built an Azure OpenAI chatbot inside Business Central for retail insights, and developed capex limit controls, job card extensions and VAT and contract reports.",
+      "At Agile Solutions I built Nepal IRD localisation features such as TDS posting on purchases and sales, and integrated a hospital's Dynamics NAV system with the national health insurance scheme through FHIR APIs (eligibility checks, claim codes and co-payments). I also developed warehouse-management extensions and custom reports for an overseas client.",
+      "I created and consumed APIs to integrate data between cloud and on-premise environments and sync POS systems to the database. Under Annual Maintenance Contracts I maintained and configured clients' Business Central and SQL Server instances.",
     ],
     highlights: [
-      "Client customisations in AL and C/AL",
-      "Cloud ↔ on-premise, POS and IRD integrations",
-      "AMC maintenance of Business Central and SQL Server",
+      "LS Retail upgrade to Business Central 27 / LS Central 27.1",
+      "Azure OpenAI retail-insights chatbot inside Business Central",
+      "Nepal IRD localisation (TDS) and health-insurance FHIR integration",
+      "Cloud ↔ on-premise and POS integrations; AMC support",
     ],
-    tags: ["Business Central", "AL", "C/AL", "APIs", "SQL Server"],
+    tags: ["Business Central", "LS Retail", "AL", "C/AL", "Azure OpenAI", "FHIR", "SQL Server"],
   },
   {
     id: "infra",
@@ -170,12 +178,12 @@ export const EXPERIENCE: Job[] = [
     when: "Oct 2024 – Jun 2026",
     roles: [{ title: "Technical Consultant", when: "Oct 2024 – Jun 2026" }],
     points: [
-      "Developed full-stack applications using C# and React.",
-      "Built a RAG pipeline that extracted business intelligence from Business Central .app files and stored embeddings in a Qdrant vector database, giving a chatbot under development access to enterprise data.",
-      "Developed machine learning models in Python to forecast data for the same enterprise systems.",
-      "Maintained Docker containers running Qdrant, Redis, ClickHouse and other services.",
-      "Worked on an application hosted on Azure.",
-      "Provided technical consultancy on Business Central ERP to clients and developed customisations to client specifications.",
+      "Core developer and top contributor on Aurora BI, an AI analytics platform for Business Central and LS Retail (.NET, React/TypeScript, Python): it reads a client's ERP schema, designs a ClickHouse warehouse, builds the ETL and dashboards, and answers plain-English questions.",
+      "Built its natural-language query engine (LLM-generated ClickHouse SQL with self-healing retries and SQL-injection guards) and a RAG knowledge base that parses Business Central .app files into Qdrant embeddings.",
+      "Developed the Python/FastAPI ML service (Prophet forecasting, Celery training jobs), plus SaaS and reporting features: multi-tenancy, subscription tiers and usage metering, KPI targets, alert digests and escalation workflows.",
+      "Migrated the platform from SQL Server to PostgreSQL and added OpenTelemetry observability, Hangfire background jobs and caching; built data-source connectors and identity services (authentication, roles, 2FA).",
+      "Upgraded LS Retail customisations to Business Central 27 / LS Central 27.1 for a Middle East retail group, built an Azure OpenAI retail-insights chatbot inside Business Central, and developed capex controls, job card extensions and VAT reports.",
+      "Maintained Docker containers running Qdrant, Redis, ClickHouse and other services, and worked on an Azure-hosted application.",
     ],
   },
   {
@@ -187,8 +195,9 @@ export const EXPERIENCE: Job[] = [
       { title: "Technical Trainee", when: "Aug 2022 – Nov 2022" },
     ],
     points: [
-      "Developed customisations on Business Central to client specifications.",
-      "Created and consumed APIs for integrating data between cloud and on-premise environments, syncing POS to database, and for IRD requirements.",
+      "Developed customisations on Business Central to client specifications, including warehouse-management extensions and custom reports for an overseas client.",
+      "Built Nepal IRD localisation features such as TDS posting on purchases and sales, and created and consumed APIs for cloud ↔ on-premise integration and POS-to-database sync.",
+      "Integrated a hospital's Dynamics NAV system (C/AL) with the national health insurance scheme through FHIR APIs: eligibility checks, claim codes and co-payments.",
       "Created and managed databases and database triggers for data security.",
       "Managed the code base in GitHub repositories.",
       "Provided technical consultancy on Business Central ERP, and maintained and configured Business Central and SQL Server instances under Annual Maintenance Contracts.",
@@ -204,13 +213,13 @@ export const EDUCATION = [
 ];
 
 export const SKILLS: { group: string; items: string[] }[] = [
-  { group: "Languages", items: ["C#", "Python", "Java", "PL/SQL", "C/AL", "AL"] },
-  { group: "Frontend", items: ["React", "HTML", "CSS"] },
-  { group: "Backend & Frameworks", items: ["C#.NET", "Laravel"] },
-  { group: "Databases", items: ["SQL Server", "ClickHouse", "Redis", "PostgreSQL", "Qdrant (vector DB)"] },
-  { group: "Cloud & DevOps", items: ["Azure", "Docker", "GitHub", "SSL certificate management"] },
-  { group: "AI / Machine Learning", items: ["RAG systems", "TensorFlow", "Scikit-Learn", "Pandas", "NumPy", "Qiskit"] },
-  { group: "ERP", items: ["Microsoft Dynamics 365 Business Central"] },
+  { group: "Languages", items: ["C#", "Python", "TypeScript", "AL", "C/AL", "PL/SQL", "Java"] },
+  { group: "Frontend", items: ["React", "TypeScript", "HTML", "CSS"] },
+  { group: "Backend & Frameworks", items: [".NET (ASP.NET Core, EF Core)", "FastAPI", "Laravel"] },
+  { group: "Databases", items: ["SQL Server", "PostgreSQL", "ClickHouse", "Redis", "Qdrant (vector DB)"] },
+  { group: "Cloud & DevOps", items: ["Azure", "Azure DevOps", "Docker", "GitHub", "Hangfire", "OpenTelemetry", "SSL certificate management"] },
+  { group: "AI / Machine Learning", items: ["LLM integration (Claude, DeepSeek, Azure OpenAI)", "RAG systems", "Prophet", "Scikit-Learn", "TensorFlow", "Pandas", "NumPy", "Qiskit"] },
+  { group: "ERP", items: ["Microsoft Dynamics 365 Business Central", "LS Retail (LS Central)", "Dynamics NAV (C/AL)"] },
 ];
 
 // ─── Info panels opened from the Lab and House ───

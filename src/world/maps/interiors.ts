@@ -133,7 +133,7 @@ export const systemsWorks: MapDef = {
     { kind: "banner", x: 7, y: 0, opts: { glow: RAMP.navy, label: "AI" } },
     { kind: "rug", x: 4, y: 2 },
     kiosk("bc-erp", 2, 4, RAMP.orange),
-    kiosk("ai-data", 8, 4, RAMP.purple),
+    kiosk("aurora", 8, 4, RAMP.purple),
     kiosk("infra", 2, 7, RAMP.teal),
     ...[8, 9, 10].map((x): PropDef => ({ kind: "server", x, y: 7,
       talk: { say: ["A rack of servers hums quietly.\nEvery status light is green."] } })),
@@ -146,7 +146,7 @@ export const systemsWorks: MapDef = {
       talk: {
         say: [
           "You found SYSTEMS WORKS!",
-          "We handle ERP, AI and infrastructure here:\nBusiness Central, a RAG pipeline on Qdrant,\nDocker services and SQL Server.",
+          "We handle ERP, AI and infrastructure here:\nBusiness Central, the Aurora BI platform,\nDocker services and SQL Server.",
           "It's not flashy, but it's what keeps\nproduction running!",
         ],
         then: { kind: "hall", building: "systems" },

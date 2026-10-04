@@ -15,12 +15,13 @@ A full-page, GBA-era-style town explored tile by tile, with enterable buildings,
 | Status | Open to new roles |
 | Email | upanshupandey@gmail.com |
 | LinkedIn | https://www.linkedin.com/in/upanshu-pandey-48a48b1a4/ |
-| CV | `public/assets/resume/upanshu-pandey-cv.pdf` |
+| CV | `public/assets/resume/upanshu-pandey-cv.pdf`, built from `resume/cv.html` with `npm run cv` |
+| Thesis | `public/assets/thesis/upanshu-pandey-qrl-thesis.pdf` (clean copy, no Turnitin pages) |
 
-**Source of truth for facts:** `Upanshu Pandey CV 2026` (copied to `public/assets/resume/upanshu-pandey-cv.pdf`). Keep site content traceable to it.
+**Source of truth for facts:** the CV source `resume/cv.html`, the dissertation, and Upanshu's own work repos. Keep site content traceable to them, and describe clients generically, never by name.
 
-**Experience:** Technical Consultant, Voyager Nepal (Oct 2024 – Jun 2026): C# + React apps, RAG pipeline on Qdrant, Python forecasting models, Docker services, Azure, BC consultancy · Agile Solutions (Aug 2022 – Oct 2024): Jr. Technical Consultant, Associate Technical Consultant, Technical Trainee.
-**Projects on the site:** Full-Stack Business Applications, E-Commerce Website (Laravel), Quantum RL Circuit Optimizer (Web Workshop) · RAG Pipeline & Forecasting, Business Central ERP Consulting, Databases & Infrastructure (Systems Works).
+**Experience:** Technical Consultant, Voyager Nepal (Oct 2024 – Jun 2026): Aurora BI (AI analytics platform for BC/LS Retail: NLP→ClickHouse SQL, RAG on Qdrant, Python ML service, Postgres migration), LS Retail BC 27 upgrade, Azure OpenAI chatbot in BC, Docker services, BC consultancy · Agile Solutions (Aug 2022 – Oct 2024): Jr. Technical Consultant, Associate Technical Consultant, Technical Trainee (IRD localisation/TDS, hospital NAV ↔ health insurance FHIR integration, warehouse extensions).
+**Projects on the site:** Full-Stack Business Applications, E-Commerce Website (Laravel), Quantum RL Circuit Optimizer (Web Workshop) · Aurora BI, Business Central ERP Consulting, Databases & Infrastructure (Systems Works).
 **Education:** BSc Computing (Hons), First Class, The British College (2020–2023) · A-Levels, GIHE (2017–2019).
 
 ## File map
