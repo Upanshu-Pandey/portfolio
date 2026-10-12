@@ -44,13 +44,16 @@ An interactive top-down portfolio for **Upanshu Pandey** in the visual style of 
 | Zone | Map id | Contents |
 |---|---|---|
 | Upanshu Town (spawn) | `town` | Welcome sign, guide, fountain plaza, pond + pier, tall grass, ledge, north road sign |
-| Pine Research Lab | `lab` | Dr. Pine (About), bookshelves (Skills), diploma (Education), PC (Experience), CV desk (opens PDF), assistant (Contact), server racks (Quantum project) |
-| Web Workshop | `webWorkshop` | Lead engineer + kiosks: Analytics Front End, SaaS Platform, E-Commerce, Quantum RL |
-| Systems Works | `systemsWorks` | Lead engineer + kiosks: AI Analytics Platform, Business Central ERP, Databases & Infra |
+| Town Hall | `hall` | *Who is he?* Mayor (About), career timeline of wall portraits left → right (A-Levels → diploma/Education → each role → Experience → empty "next role" frame/Contact), bookshelves (Skills, each linked to the projects that used it), CV desk (opens PDF) |
+| The Platform | `platform` | *The flagship product.* Engineer (overview) + one station per part of the Voyager analytics platform: NL query engine, RAG, ML service, SaaS & reporting, identity & connectors, front end, ETL/migration/observability, hosting & deployment |
+| Consultancy Office | `consultancy` | *Client work.* Consultant + one filing cabinet per case file (client, brief, what he did): retail group upgrade, health insurance FHIR, IRD localisation, warehouse extensions, integrations, maintenance contracts |
+| Observatory | `observatory` | *His own work.* Stargazer + telescope (Quantum RL), thesis desk (opens the PDF), PC (E-Commerce) |
 | Upanshu's House | `house` | Mom (Contact), flavour objects |
 
+**No repeats:** each fact has one home in the world. Buildings go deep on one question each; only the RÉSUMÉ panel summarises everything together.
+
 ## Adding things
-- **New project:** add it to `PROJECTS` in `src/content.ts` (`building: "web" | "systems"`), then place `kiosk("id", x, y, RAMP.teal)` in that building in `src/world/maps/interiors.ts`.
+- **New project:** add it to `PROJECTS` in `src/content.ts` (`building: "platform" | "consultancy" | "observatory"`; case files also take `client` and `brief`). Tag it with names from `SKILLS` so it shows up as evidence on the Tech Stack page. Then place it in that building in `src/world/maps/interiors.ts` with `station(...)`, `caseFile(...)` or a prop of its own. Make sure it doesn't retell another entry.
 - **New map object:** add a prop from the `propArt` registry (`src/art/props.ts`) to a map's `props`, with an optional `talk` interaction.
 - **New building:** draw it in `props.ts` with the building kit (`roof`, `wall`, `windowPane`, `glassDoor`…). Give its footprint a `D` door cell, and add a warp and a spawn on both maps.
 - After art changes, run `npm run art:preview` (optionally `npm run art:preview -- town 20 14 12 10 3` for a zoomed crop) and look at the PNGs.

@@ -5,7 +5,7 @@
 import { pushHandler } from "../input.ts";
 import { sfx, toggleMute } from "../audio.ts";
 import { isMuted } from "../state.ts";
-import { openProjects, openResume, openInfo, openResumePdf } from "./panel.ts";
+import { openProjects, openResume, openInfo, openProject, openPdf, resumeUrl } from "./panel.ts";
 import { say } from "./dialogue.ts";
 import type { MapId } from "../world/types.ts";
 
@@ -13,9 +13,10 @@ export interface Destination { label: string; map: MapId; spawn: string }
 
 export const DESTINATIONS: Destination[] = [
   { label: "TOWN SQUARE", map: "town", spawn: "square" },
-  { label: "PINE RESEARCH LAB", map: "lab", spawn: "door" },
-  { label: "WEB WORKSHOP", map: "webWorkshop", spawn: "door" },
-  { label: "SYSTEMS WORKS", map: "systemsWorks", spawn: "door" },
+  { label: "TOWN HALL", map: "hall", spawn: "door" },
+  { label: "THE PLATFORM", map: "platform", spawn: "door" },
+  { label: "CONSULTANCY OFFICE", map: "consultancy", spawn: "door" },
+  { label: "OBSERVATORY", map: "observatory", spawn: "door" },
   { label: "UPANSHU'S HOUSE", map: "house", spawn: "door" },
 ];
 
@@ -33,7 +34,7 @@ export function menuOpen(): boolean {
 }
 
 export async function getCv(): Promise<void> {
-  if (openResumePdf()) {
+  if (openPdf(resumeUrl())) {
     sfx.jingle();
     await say(["Upanshu's CV is on its way!\n(It opened in a new tab.)"]);
     return;
@@ -41,6 +42,17 @@ export async function getCv(): Promise<void> {
   // Popup blocked: fall back to the contact page, whose CV link is a plain tap.
   await say(["Your browser blocked the new tab.\nTap \"Open CV\" on the next page."]);
   await openInfo("contact");
+}
+
+/** Open a supporting PDF; if the tab is blocked, show the project write-up, which links it. */
+export async function getPdf(url: string, fallback: string): Promise<void> {
+  if (openPdf(url)) {
+    sfx.jingle();
+    await say(["It opened in a new tab."]);
+    return;
+  }
+  await say(["Your browser blocked the new tab.\nThe link is in the write-up on the next page."]);
+  await openProject(fallback);
 }
 
 /** Show a list menu in the box; resolves with the picked index or -1. */

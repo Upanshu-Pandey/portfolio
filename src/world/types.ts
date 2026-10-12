@@ -4,17 +4,18 @@
 import type { Dir } from "../art/characters.ts";
 import type { PropOpts } from "../art/props.ts";
 import type { Theme } from "../art/tiles.ts";
-import type { PanelId } from "../content.ts";
+import type { PanelId, BuildingId } from "../content.ts";
 
 export type { Dir };
-export type MapId = "town" | "lab" | "webWorkshop" | "systemsWorks" | "house";
+export type MapId = "town" | "hall" | "platform" | "consultancy" | "observatory" | "house";
 
 /** What happens after the dialogue, behind a YES/NO prompt. */
 export type Follow =
   | { kind: "project"; id: string }
-  | { kind: "hall"; building: "web" | "systems" }
+  | { kind: "building"; id: BuildingId }
   | { kind: "panel"; id: PanelId }
   | { kind: "resume" }
+  | { kind: "pdf"; path: string; fallback: string }   // fallback: project id to open if a popup blocker stops the tab
   | { kind: "menu" };
 
 export interface Interaction {

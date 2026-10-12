@@ -47,9 +47,10 @@ export const town: MapDef = {
   ],
   props: [
     { kind: "house", x: 5, y: 6 },
-    { kind: "webWorkshop", x: 31, y: 6 },
-    { kind: "lab", x: 4, y: 19 },
-    { kind: "systemsWorks", x: 31, y: 20 },
+    { kind: "observatory", x: 14, y: 6 },
+    { kind: "consultancy", x: 31, y: 6 },
+    { kind: "townHall", x: 4, y: 19 },
+    { kind: "platform", x: 31, y: 20 },
     { kind: "fountain", x: 20, y: 16, talk: { say: ["The fountain sparkles in the sun.\nSomeone tossed in a coin… and a USB stick?"] } },
     { kind: "lamp", x: 19, y: 13 }, { kind: "lamp", x: 24, y: 13 },
     { kind: "lamp", x: 19, y: 24 }, { kind: "lamp", x: 24, y: 24 },
@@ -75,9 +76,10 @@ export const town: MapDef = {
         ask: "Show contact details?",
       },
     },
-    { kind: "sign", x: 13, y: 24, talk: { say: ["PINE RESEARCH LAB\nAbout · Skills · Experience · CV"] } },
-    { kind: "sign", x: 30, y: 10, talk: { say: ["WEB WORKSHOP\nWeb & full-stack projects."] } },
-    { kind: "sign", x: 30, y: 24, talk: { say: ["SYSTEMS WORKS\nERP, AI & infrastructure projects."] } },
+    { kind: "sign", x: 13, y: 24, talk: { say: ["TOWN HALL\nMeet the mayor · Career timeline · CV"] } },
+    { kind: "sign", x: 30, y: 10, talk: { say: ["CONSULTANCY OFFICE\nBusiness Central client case files."] } },
+    { kind: "sign", x: 30, y: 24, talk: { say: ["THE PLATFORM\nAn AI analytics platform, part by part."] } },
+    { kind: "sign", x: 20, y: 10, talk: { say: ["OBSERVATORY\nDissertation & personal projects."] } },
     { kind: "mailbox", x: 11, y: 10, talk: { say: ["UPANSHU'S HOUSE\nThe mailbox is empty.\nThere's plenty of room for your message!"] } },
   ],
   npcs: [
@@ -86,9 +88,10 @@ export const town: MapDef = {
       talk: {
         say: [
           "Hi there! First time in UPANSHU TOWN?",
-          "North-east is the WEB WORKSHOP:\nweb and full-stack projects.",
-          "South-east is SYSTEMS WORKS:\nERP, data and infrastructure.",
-          "South-west is the PINE RESEARCH LAB. Learn\nabout Upanshu there and pick up his CV!",
+          "South-west is the TOWN HALL. The mayor\nknows all about Upanshu, and his CV\nis there too!",
+          "South-east is THE PLATFORM: the AI\nanalytics product he helped build.",
+          "North-east is the CONSULTANCY OFFICE:\nhis Business Central client work.",
+          "Up north is the OBSERVATORY: his\ndissertation and personal projects.",
           "Short on time? Press ESC. The menu can\ntake you straight to any building.",
         ],
       },
@@ -98,7 +101,7 @@ export const town: MapDef = {
       talk: {
         say: [
           "I tried to run a report in the long grass\nand the query just… kept… running.",
-          "Turns out it needed an index!\nThe folks at SYSTEMS WORKS fixed it in\nno time.",
+          "Turns out it needed an index!\nThe folks at THE PLATFORM fixed it in\nno time.",
         ],
       },
     },
@@ -107,23 +110,25 @@ export const town: MapDef = {
       talk: {
         say: [
           "Did you know? Upanshu studied Computing at\nThe British College in Kathmandu.",
-          "He graduated with FIRST CLASS HONOURS!\nHis diploma hangs in the PINE RESEARCH LAB.",
+          "He graduated with FIRST CLASS HONOURS!\nHis diploma hangs in the TOWN HALL.",
         ],
       },
     },
   ],
   warps: [
     { x: 7, y: 10, to: "house", spawn: "door" },
-    { x: 34, y: 10, to: "webWorkshop", spawn: "door" },
-    { x: 8, y: 24, to: "lab", spawn: "door" },
-    { x: 34, y: 24, to: "systemsWorks", spawn: "door" },
+    { x: 16, y: 10, to: "observatory", spawn: "door" },
+    { x: 34, y: 10, to: "consultancy", spawn: "door" },
+    { x: 8, y: 24, to: "hall", spawn: "door" },
+    { x: 34, y: 24, to: "platform", spawn: "door" },
   ],
   spawns: {
     start: { x: 21, y: 20, dir: "down" },
     square: { x: 22, y: 19, dir: "down" },
     house: { x: 7, y: 11, dir: "down" },
-    webWorkshop: { x: 34, y: 11, dir: "down" },
-    lab: { x: 8, y: 25, dir: "down" },
-    systemsWorks: { x: 34, y: 25, dir: "down" },
+    observatory: { x: 16, y: 11, dir: "down" },
+    consultancy: { x: 34, y: 11, dir: "down" },
+    hall: { x: 8, y: 25, dir: "down" },
+    platform: { x: 34, y: 25, dir: "down" },
   },
 };

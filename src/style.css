@@ -444,6 +444,26 @@ body:not(.playing) #area-banner { visibility: hidden; }
 .skill-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .skill-grid h4 { margin: 0; font-family: var(--font-ui); font-size: 10px; color: var(--frame-dk); }
 
+.case-file {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 14px;
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  background: #fffdf6;
+  border: 3px solid #d8ccb0;
+  border-left: 8px solid var(--gold);
+  border-radius: 6px;
+}
+.case-file dt { font-family: var(--font-ui); font-size: 9px; color: #7a7466; padding-top: 0.35em; }
+.case-file dd { margin: 0; }
+
+.evidence { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.evidence li { display: grid; gap: 2px; }
+.evidence span { font-size: 0.85em; color: #4a4638; }
+.evidence em { color: #7a7466; }
+h4.group { font-family: var(--font-ui); font-size: 10px; color: var(--frame-dk); margin: 1.2em 0 0; }
+
 .contact { list-style: none; padding: 0; display: grid; gap: 8px; }
 .contact li { display: grid; grid-template-columns: 110px 1fr; align-items: baseline; }
 .contact span { font-family: var(--font-ui); font-size: 9px; color: #7a7466; }

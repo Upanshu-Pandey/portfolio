@@ -289,12 +289,12 @@ const KHAKI = ramp("#4a3c24", "#6e5a34", "#8e7646", "#ac925a", "#d0b87e");
 
 export const OUTFITS: Record<string, Outfit> = {
   player:    { head: "cap", hair: BROWN, cap: RAMP.red, shirt: RAMP.teal, pants: DENIM },
-  pine:      { head: "hair", coat: true, hair: GREY, shirt: RAMP.navy, pants: KHAKI },
-  aide:      { head: "hair", coat: true, long: true, hair: AUBURN, shirt: RAMP.pink, pants: CHARCOAL },
+  mayor:     { head: "hair", hair: GREY, shirt: RAMP.red, pants: CHARCOAL },
+  stargazer: { head: "hair", coat: true, long: true, hair: AUBURN, shirt: RAMP.purple, pants: CHARCOAL },
   guide:     { head: "hair", hair: BLACK, shirt: RAMP.orange, pants: KHAKI },
   mom:       { head: "hair", long: true, hair: AUBURN, shirt: RAMP.pink, pants: DENIM },
-  leadWeb:   { head: "hair", hair: BLONDE, shirt: RAMP.navy, pants: CHARCOAL },
-  leadSys:   { head: "hair", long: true, hair: BLACK, shirt: RAMP.orange, pants: CHARCOAL },
+  consultant: { head: "hair", hair: BLONDE, shirt: RAMP.navy, pants: CHARCOAL },
+  engineer:  { head: "hair", long: true, hair: BLACK, shirt: RAMP.orange, pants: CHARCOAL },
   kid:       { head: "cap", hair: BLACK, cap: RAMP.white, shirt: RAMP.yellow, pants: DENIM },
   walker:    { head: "hair", long: true, hair: BLONDE, shirt: RAMP.teal, pants: RAMP.red },
 };

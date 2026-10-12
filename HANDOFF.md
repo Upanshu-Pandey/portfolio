@@ -1,7 +1,7 @@
 # Upanshu Pandey: Retro RPG Portfolio · Handoff
 
 > Give this file to an AI or collaborator to resume work with full context.
-> Last updated: 2026-09-25
+> Last updated: 2026-10-13
 
 ## Status
 A full-page, GBA-era-style town explored tile by tile, with enterable buildings, NPCs, ledges, a main menu and HTML panels for all content. All art is authored in code. There are no franchise references (see `AGENTS.md`). It builds cleanly (`npm run build`) and deploys to GitHub Pages on push to `master`.
@@ -21,7 +21,7 @@ A full-page, GBA-era-style town explored tile by tile, with enterable buildings,
 **Source of truth for facts:** the CV source `resume/cv.html`, the dissertation, and Upanshu's own work repos. Keep site content traceable to them, and describe clients generically, never by name.
 
 **Experience:** Technical Consultant, Voyager Nepal (Oct 2024 – Jun 2026): AI analytics platform for BC/LS Retail (backend: NLP→ClickHouse SQL, RAG on Qdrant, Python ML service, Azure hosting (IIS + Azure SQL) then Docker Compose VPS deploy, Postgres migration; React front end; .NET identity + connector services), LS Retail BC 27 upgrade, Azure OpenAI chatbot in BC, Docker services, BC consultancy · Agile Solutions (Aug 2022 – Oct 2024): Jr. Technical Consultant, Associate Technical Consultant, Technical Trainee (IRD localisation/TDS, hospital NAV ↔ health insurance FHIR integration, warehouse extensions).
-**Projects on the site:** Analytics Platform Front End, SaaS Platform (identity, connectors, admin), E-Commerce Website (Laravel), Quantum RL Circuit Optimizer (Web Workshop) · AI Analytics Platform, Business Central ERP Consulting, Databases & Infrastructure (Systems Works).
+**Projects on the site:** The Platform (one station per part of the Voyager analytics platform: NL query engine, RAG, ML service, SaaS & reporting, identity & connectors, front end, ETL/migration/observability, hosting & deployment) · Consultancy Office (case files: retail group upgrade + chatbot, health insurance FHIR, IRD localisation, warehouse extensions, integrations, maintenance contracts) · Observatory (Quantum RL dissertation, E-Commerce site). The Town Hall holds About, the career timeline, Education, Skills and the CV.
 **Education:** BSc Computing (Hons), First Class, The British College (2020–2023) · A-Levels, GIHE (2017–2019).
 
 ## File map
@@ -37,7 +37,7 @@ src/
     pixel.ts         Pix RGBA buffer, grids, crop, dithered shading, lit clusters, 3×5 font
     palette.ts       5-shade hue-shifted ramps per material
     tiles.ts         terrain: grass, tall grass, autotiled path/plaza/water, pier, flowers, fence, ledge, walls, floors
-    props.ts         trees, fountain, lamps, signs, building kit + 4 buildings, 3/4-view furniture
+    props.ts         trees, fountain, lamps, signs, building kit + 5 buildings, 3/4-view furniture
     characters.ts    16×32 walk sheets (cap/hair heads, long hair, lab coat) + outfits + drop shadow
     index.ts         bakes everything into KAPLAY sprites (ground + over layers per map)
   world/

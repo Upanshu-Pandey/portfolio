@@ -7,8 +7,8 @@ import { sfx } from "../audio.ts";
 import { markSeen, isSeen } from "../state.ts";
 import { asset } from "../config.ts";
 import {
-  PROFILE, PROJECTS, EXPERIENCE, EDUCATION, SKILLS, CATEGORY_COLORS,
-  type PanelId, type Project,
+  PROFILE, PROJECTS, BUILDINGS, EXPERIENCE, EDUCATION, SKILLS, CATEGORY_COLORS, projectsUsing,
+  type PanelId, type Project, type BuildingId,
 } from "../content.ts";
 
 const esc = (s: string) =>
@@ -21,9 +21,9 @@ export function resumeUrl(): string {
   return asset(PROFILE.resume);
 }
 
-/** Open the CV PDF in a new browser tab. Returns false if a popup blocker stopped it. */
-export function openResumePdf(): boolean {
-  const w = window.open(resumeUrl(), "_blank");
+/** Open a PDF in a new browser tab. Returns false if a popup blocker stopped it. */
+export function openPdf(url: string): boolean {
+  const w = window.open(url, "_blank");
   if (!w) return false;
   w.opener = null;
   return true;
@@ -38,6 +38,12 @@ function projectHTML(p: Project): string {
       <div class="cats">${categories(p)}</div>
     </header>
     <p class="entry-when">${esc(p.when)}</p>
+    ${p.client ? `
+    <dl class="case-file">
+      <dt>CLIENT</dt><dd>${esc(p.client)}</dd>
+      ${p.brief ? `<dt>BRIEF</dt><dd>${esc(p.brief)}</dd>` : ""}
+    </dl>
+    <h3>What I did</h3>` : ""}
     ${p.body.map((b) => `<p>${esc(b)}</p>`).join("")}
     <h3>Highlights</h3>
     <ul class="bullets">${p.highlights.map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
@@ -63,6 +69,18 @@ function skillsHTML(): string {
     <section><h4>${esc(s.group)}</h4><div class="chips">${s.items.map((i) => `<span>${esc(i)}</span>`).join("")}</div></section>`).join("")}</div>`;
 }
 
+/** Skills with the projects that used them, so the list points at evidence instead of repeating it. */
+function skillEvidenceHTML(): string {
+  return `<p class="lead">Each skill lists the projects in town where it was used.</p>${SKILLS.map((s) => `
+    <h3>${esc(s.group)}</h3>
+    <ul class="evidence">${s.items.map((i) => {
+      const used = projectsUsing(i);
+      return `<li><strong>${esc(i)}</strong>${used.length
+        ? `<span>${used.map((p) => `${esc(p.title)} <em>(${esc(BUILDINGS[p.building].name)})</em>`).join(" · ")}</span>`
+        : ""}</li>`;
+    }).join("")}</ul>`).join("")}`;
+}
+
 function contactHTML(): string {
   return `
     <ul class="contact">
@@ -76,7 +94,7 @@ function contactHTML(): string {
 
 const INFO: Record<PanelId, { title: string; html: () => string }> = {
   about: { title: "About Upanshu", html: () => `<p class="lead">${esc(PROFILE.summary)}</p>${contactHTML()}` },
-  skills: { title: "Tech Stack", html: skillsHTML },
+  skills: { title: "Tech Stack", html: skillEvidenceHTML },
   education: { title: "Education", html: educationHTML },
   experience: { title: "Experience", html: experienceHTML },
   contact: { title: "Contact", html: contactHTML },
@@ -97,8 +115,10 @@ function resumeHTML(): string {
     </div>
     <p class="lead">${esc(PROFILE.summary)}</p>
     <h3>Experience</h3>${experienceHTML()}
-    <h3>Projects</h3>
-    <ul class="bullets">${PROJECTS.map((p) => `<li><strong>${esc(p.title)}</strong> · ${esc(p.short)}</li>`).join("")}</ul>
+    <h3>Projects</h3>${(Object.keys(BUILDINGS) as BuildingId[]).map((b) => `
+    <h4 class="group">${esc(BUILDINGS[b].name)}</h4>
+    <ul class="bullets">${PROJECTS.filter((p) => p.building === b).map((p) =>
+      `<li><strong>${esc(p.title)}</strong> · ${esc(p.short)}</li>`).join("")}</ul>`).join("")}
     <h3>Education</h3>${educationHTML()}
     <h3>Skills</h3>${skillsHTML()}
     <h3>Contact</h3>${contactHTML()}`;
@@ -218,22 +238,22 @@ export function openProject(id: string): Promise<void> {
   return show({ title: "PROJECT LOG", html: () => projectHTML(p) });
 }
 
-function projectList(title: string, list: Project[], intro = ""): Promise<void> {
+function projectList(title: string, list: Project[], intro = "", sub = (p: Project) => p.short): Promise<void> {
   return show({
     title,
     html: () => `${intro}<p class="log-count">VIEWED ${list.filter((p) => isSeen(p.id)).length} / ${list.length}</p>`,
-    items: () => list.map((p) => ({ label: p.title, sub: p.short, mark: isSeen(p.id) ? "★" : "☆" })),
+    items: () => list.map((p) => ({ label: p.title, sub: sub(p), mark: isSeen(p.id) ? "★" : "☆" })),
     onPick: (i) => openProject(list[i]!.id),
   });
 }
 
 export function openProjects(): Promise<void> {
-  return projectList("PROJECT LOG", PROJECTS);
+  return projectList("PROJECT LOG", PROJECTS, "", (p) => `${BUILDINGS[p.building].name} · ${p.short}`);
 }
 
-export function openHall(building: "web" | "systems"): Promise<void> {
-  const name = building === "web" ? "WEB WORKSHOP" : "SYSTEMS WORKS";
-  return projectList(name, PROJECTS.filter((p) => p.building === building));
+export function openBuilding(id: BuildingId): Promise<void> {
+  const b = BUILDINGS[id];
+  return projectList(b.name.toUpperCase(), PROJECTS.filter((p) => p.building === id), `<p class="lead">${esc(b.intro)}</p>`);
 }
 
 export function openInfo(id: PanelId): Promise<void> {

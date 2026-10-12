@@ -19,6 +19,7 @@ export interface PropOpts {
   glow?: Ramp;            // kiosk screens, banners
   item?: "cv" | "papers";
   label?: string;
+  empty?: boolean;        // portrait: an empty frame
 }
 
 const solid = (w: number, h: number, door?: [number, number]) =>
@@ -291,27 +292,37 @@ function house(): Pix {
   return p;
 }
 
-/** Pine Research Lab: wide slate roof, vents, big windows. 9×6 tiles, door at (4,5). */
-function lab(frame: number): Pix {
+/** Town Hall: clock tower, red slate roof, columned entrance. 9×6 tiles, door at (4,5). */
+function townHall(frame: number): Pix {
   const p = new Pix(144, 96);
+  const s = RAMP.stone, rr = RAMP.roofRed;
   ellipseShadow(p, 72, 94, 70, 3, C.shadowSoft);
-  roof(p, 0, 6, 144, 40, RAMP.roofSlate, "slate", 5);
-  for (const vx of [20, 112]) {
-    p.rect(vx, 8, 12, 10, RAMP.metal[3]).box(vx, 8, 12, 10, RAMP.metal[0]).hline(vx + 1, 9, 10, RAMP.metal[4]);
-    for (let i = 0; i < 3; i++) p.hline(vx + 2, 11 + i * 2, 8, RAMP.metal[1]);
+  roof(p, 0, 10, 144, 36, rr, "slate", 5);
+  // clock tower over the entrance
+  p.rect(58, 3, 28, 30, s[3]).box(58, 3, 28, 30, s[0]).vline(59, 4, 28, s[4]).vline(84, 4, 28, s[1]);
+  p.rect(55, 0, 34, 4, rr[2]).box(55, 0, 34, 4, rr[0]).hline(56, 1, 32, rr[4]);
+  for (let y = -8; y <= 8; y++)
+    for (let x = -8; x <= 8; x++) {
+      const d = Math.hypot(x, y);
+      if (d <= 8) p.px(72 + x, 18 + y, d > 7 ? C.ink : d > 6 ? RAMP.yellow[2] : RAMP.white[4]);
+    }
+  p.vline(72, 12, 6, C.ink).hline(72, 18, 5, C.ink);
+  const tick = [[72, 12], [77, 18], [72, 23], [67, 18]][frame % 3]!;
+  p.px(tick[0]!, tick[1]!, RAMP.red[2]);
+  wall(p, 4, 46, 136, 46, RAMP.cream);
+  for (const wx of [12, 30, 98, 116]) windowPane(p, wx, 58, 16, 14);
+  plate(p, 72, 49, "TOWN HALL", RAMP.red, RAMP.white[4]);
+  for (const cx of [52, 88]) {
+    p.rect(cx, 62, 4, 30, s[3]).vline(cx, 62, 30, s[4]).vline(cx + 3, 62, 30, s[1]);
+    p.hline(cx - 1, 61, 6, s[4]).hline(cx - 1, 60, 6, s[0]).hline(cx - 1, 91, 6, s[2]);
   }
-  p.vline(72, 0, 12, RAMP.metal[0]).vline(73, 0, 12, RAMP.metal[3]);
-  p.rect(71, 0, 4, 2, frame === 1 ? RAMP.red[4] : RAMP.red[2]);
-  wall(p, 4, 46, 136, 46, RAMP.wall);
-  for (const wx of [12, 36, 90, 114]) windowPane(p, wx, 54, 18, 14);
-  plate(p, 72, 49, "LAB", RAMP.teal, RAMP.white[4]);
-  glassDoor(p, 64, 66, 26);
+  woodDoor(p, 64, 70);
   foundation(p, 4, 92, 136);
   return p;
 }
 
-/** Web Workshop: teal roof, glass storefront, neon </> sign. 7×5 tiles, door at (3,4). */
-function webWorkshop(frame: number): Pix {
+/** Consultancy Office: teal roof, glass storefront, name board. 7×5 tiles, door at (3,4). */
+function consultancy(): Pix {
   const p = new Pix(112, 80);
   ellipseShadow(p, 56, 78, 54, 3, C.shadowSoft);
   roof(p, 0, 0, 112, 30, RAMP.roofTeal, "shingle", 4);
@@ -320,19 +331,7 @@ function webWorkshop(frame: number): Pix {
     windowPane(p, wx, 50, 34, 18);
     p.rect(wx - 1, 46, 36, 3, RAMP.roofTeal[2]).hline(wx - 1, 46, 36, RAMP.roofTeal[4]).hline(wx - 1, 49, 36, RAMP.roofTeal[0]);
   }
-  const nx = 36, ny = 33;
-  p.rect(nx, ny, 40, 13, RAMP.navy[1]).box(nx, ny, 40, 13, C.ink).hline(nx + 1, ny + 1, 38, RAMP.navy[3]);
-  const neon = frame === 2 ? RAMP.teal[3] : RAMP.teal[4];
-  const glyph = [
-    "..#.....#.#.....",
-    ".#.....#...#....",
-    "#.....#.....#...",
-    ".#...#.....#....",
-    "..#.#.....#.....",
-  ];
-  glyph.forEach((row, j) => [...row].forEach((c, i) => {
-    if (c === "#") { p.px(nx + 13 + i, ny + 5 + j, RAMP.teal[1]); p.px(nx + 12 + i, ny + 4 + j, neon); }
-  }));
+  plate(p, 56, 34, "CONSULTING", RAMP.navy, RAMP.white[4]);
   glassDoor(p, 48, 52, 24);
   foundation(p, 4, 76, 104);
   return p;
@@ -350,8 +349,8 @@ function gear(p: Pix, cx: number, cy: number, r: number, ramp: Ramp): void {
     }
 }
 
-/** Systems Works: corrugated steel roof, brick walls, roller shutter, gear sign. 7×5, door at (3,4). */
-function systemsWorks(frame: number): Pix {
+/** The Platform: corrugated steel roof, brick walls, roller shutter, name board with gear. 7×5, door at (3,4). */
+function platformHQ(frame: number): Pix {
   const p = new Pix(112, 80);
   ellipseShadow(p, 56, 78, 54, 3, C.shadowSoft);
   roof(p, 0, 4, 112, 26, RAMP.roofSteel, "corrugated", 3);
@@ -363,10 +362,52 @@ function systemsWorks(frame: number): Pix {
   const m = RAMP.metal;
   p.rect(10, 46, 30, 30, m[3]).box(10, 45, 30, 31, C.ink);
   for (let j = 47; j < 75; j += 3) p.hline(11, j, 28, m[1]).hline(11, j + 1, 28, m[4]);
-  p.rect(66, 38, 36, 28, RAMP.navy[1]).box(66, 38, 36, 28, C.ink).hline(67, 39, 34, RAMP.navy[3]);
-  gear(p, 84, 52, 8, RAMP.yellow);
+  p.rect(64, 36, 40, 30, RAMP.navy[1]).box(64, 36, 40, 30, C.ink).hline(65, 37, 38, RAMP.navy[3]);
+  plate(p, 84, 39, "PLATFORM", RAMP.orange, RAMP.white[4]);
+  gear(p, 84, 57, 5, RAMP.yellow);
   glassDoor(p, 48, 52, 24);
   foundation(p, 4, 76, 104);
+  return p;
+}
+
+/** Observatory: verdigris dome with an open slit and a brass telescope. 6×5 tiles, door at (2,4). */
+function observatory(frame: number): Pix {
+  const p = new Pix(96, 80);
+  const s = RAMP.stone, d = RAMP.teal, n = RAMP.navy, b = RAMP.yellow;
+  ellipseShadow(p, 48, 78, 46, 3, C.shadowSoft);
+  // dome
+  const R = 32, cx = 48, cy = 40;
+  for (let y = cy - R; y < cy; y++)
+    for (let x = cx - R; x <= cx + R; x++) {
+      const dx = x - cx + 0.5, dy = y - cy + 0.5, dist = Math.hypot(dx, dy);
+      if (dist > R) continue;
+      if (dist > R - 1) { p.px(x, y, d[0]); continue; }
+      const half = Math.sqrt(Math.max(1, R * R - dy * dy));
+      const seam = Math.round((dx / half) * 4.5) !== Math.round(((dx + 1) / half) * 4.5);
+      const v = 2.3 - (dx / R) * 1.1 - (dy / R) * 0.6;
+      p.px(x, y, seam ? d[1] : shadeAt(d, v, x, y));
+    }
+  // open slit with sky and the telescope inside
+  for (let y = cy - R + 3; y < cy - 2; y++)
+    for (let x = cx - 4; x <= cx + 3; x++) {
+      if (Math.hypot(x - cx + 0.5, y - cy + 0.5) > R - 2) continue;
+      const edge = x === cx - 4 || x === cx + 3;
+      let c = edge ? C.ink : y < cy - 20 ? n[1] : n[0];
+      if (!edge && (x * 7 + y * 3 + frame * 5) % 29 === 0) c = RAMP.white[4];
+      p.px(x, y, c);
+    }
+  for (let y = cy - 22; y < cy - 4; y++) {
+    const x = cx - 1 + Math.floor((cy - 4 - y) / 6);
+    p.px(x - 1, y, b[1]).px(x, y, b[3]).px(x + 1, y, b[2]);
+  }
+  p.rect(cx - 2, cy - 24, 5, 2, b[4]).box(cx - 2, cy - 24, 5, 2, b[0]);
+  // drum: stone ring under the dome, then the walls
+  p.rect(10, cy - 2, 76, 4, s[3]).box(10, cy - 2, 76, 4, s[0]).hline(11, cy - 1, 74, s[4]);
+  wall(p, 4, 42, 88, 34, RAMP.wall);
+  plate(p, 48, 45, "OBSERVATORY", RAMP.navy, RAMP.yellow[4]);
+  windowPane(p, 62, 58, 18, 12);
+  woodDoor(p, 32, 54);
+  foundation(p, 4, 76, 88);
   return p;
 }
 
@@ -584,6 +625,66 @@ function counter(): Pix {
   return p;
 }
 
+/** Town Hall timeline frame: a small portrait, or an empty frame for the next role. */
+function portrait(opts: PropOpts): Pix {
+  const p = new Pix(16, 16);
+  const y = RAMP.yellow;
+  p.rect(2, 2, 12, 13, y[2]).box(2, 2, 12, 13, y[0]).hline(3, 3, 10, y[4]).vline(3, 3, 11, y[3]);
+  if (opts.empty) {
+    p.rect(4, 4, 8, 9, RAMP.wall[1]).hline(4, 4, 8, RAMP.wall[0]);
+    p.rect(6, 10, 4, 2, y[3]).box(6, 10, 4, 2, y[0]);
+    return p;
+  }
+  const g = opts.glow ?? RAMP.teal, sk = RAMP.skin;
+  p.rect(4, 4, 8, 9, g[2]).hline(4, 4, 8, g[3]);
+  p.rect(5, 10, 6, 3, RAMP.navy[2]).hline(5, 10, 6, RAMP.navy[3]);
+  p.rect(6, 6, 4, 4, sk[3]).px(9, 7, sk[2]).px(9, 8, sk[2]);
+  p.hline(6, 5, 4, RAMP.bark[1]).px(6, 6, RAMP.bark[1]);
+  return p;
+}
+
+/** Consultancy filing cabinet: one case file each, with a coloured folder on top. */
+function cabinet(opts: PropOpts): Pix {
+  const p = new Pix(16, 32);
+  const m = RAMP.metal, g = opts.glow ?? RAMP.teal;
+  p.rect(0, 30, 16, 2, C.shadow);
+  p.rect(1, 6, 14, 24, m[3]).box(1, 6, 14, 24, C.ink).vline(2, 7, 22, m[4]).vline(13, 7, 22, m[2]);
+  for (const dy of [8, 15, 22]) {
+    p.box(3, dy, 10, 6, m[1]).hline(4, dy + 1, 8, m[4]);
+    p.rect(6, dy + 2, 4, 1, RAMP.white[4]).hline(6, dy + 4, 4, m[0]);
+  }
+  p.rect(5, 3, 9, 3, RAMP.white[3]).box(5, 3, 9, 3, RAMP.white[0]);
+  p.rect(3, 1, 9, 5, g[3]).box(3, 1, 9, 5, g[0]).hline(4, 2, 7, g[4]).rect(3, 0, 4, 2, g[2]);
+  return p;
+}
+
+/** Brass telescope on a wooden tripod, pointed up-right. 2×2 tiles. */
+function telescope(): Pix {
+  const p = new Pix(32, 32);
+  const b = RAMP.yellow, w = RAMP.wood, m = RAMP.metal;
+  ellipseShadow(p, 16, 29, 12, 2.5, C.shadow);
+  const line = (x0: number, y0: number, x1: number, y1: number, c: RGBA) => {
+    const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0));
+    for (let i = 0; i <= n; i++) p.px(Math.round(x0 + ((x1 - x0) * i) / n), Math.round(y0 + ((y1 - y0) * i) / n), c);
+  };
+  for (const [x1, c] of [[7, w[1]], [16, w[2]], [25, w[1]]] as const) {
+    line(16, 18, x1, 29, c);
+    line(17, 18, x1 + 1, 29, w[3]);
+  }
+  // tube: from the eyepiece (lower left) to the lens (upper right), 5px thick
+  const x0 = 6, y0 = 20, x1 = 26, y1 = 4;
+  const len = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / len, uy = (y1 - y0) / len;
+  for (let i = 0; i <= len; i += 0.5)
+    for (let j = -2; j <= 2; j++) {
+      const x = Math.round(x0 + ux * i - uy * j), y = Math.round(y0 + uy * i + ux * j);
+      p.px(x, y, Math.abs(j) === 2 ? b[0] : j === -1 ? b[4] : j === 0 ? b[3] : b[2]);
+    }
+  for (let j = -3; j <= 3; j++) p.px(Math.round(x1 - uy * j), Math.round(y1 + ux * j), j === -3 || j === 3 ? b[0] : b[1]);
+  p.rect(4, 20, 3, 3, m[1]).box(4, 20, 3, 3, C.ink);
+  p.rect(14, 14, 5, 5, m[2]).box(14, 14, 5, 5, C.ink).px(15, 15, m[4]);
+  return p;
+}
+
 // ── Registry ────────────────────────────────────────────────────
 
 export function propArt(kind: string, opts: PropOpts = {}): PropArt {
@@ -593,9 +694,10 @@ export function propArt(kind: string, opts: PropOpts = {}): PropArt {
     case "sign":         return { w: 1, h: 1, solid: solid(1, 1), draw: sign };
     case "mailbox":      return { w: 1, h: 1, solid: solid(1, 1), draw: mailbox };
     case "lamp":         return { w: 1, h: 1, solid: solid(1, 1), oy: -16, draw: lamp };
-    case "lab":          return { w: 9, h: 6, solid: solid(9, 6, [4, 5]), draw: lab };
-    case "webWorkshop":  return { w: 7, h: 5, solid: solid(7, 5, [3, 4]), draw: webWorkshop };
-    case "systemsWorks": return { w: 7, h: 5, solid: solid(7, 5, [3, 4]), draw: systemsWorks };
+    case "townHall":     return { w: 9, h: 6, solid: solid(9, 6, [4, 5]), draw: townHall };
+    case "platform":     return { w: 7, h: 5, solid: solid(7, 5, [3, 4]), draw: platformHQ };
+    case "consultancy":  return { w: 7, h: 5, solid: solid(7, 5, [3, 4]), draw: consultancy };
+    case "observatory":  return { w: 6, h: 5, solid: solid(6, 5, [2, 4]), draw: observatory };
     case "house":        return { w: 6, h: 5, solid: solid(6, 5, [2, 4]), draw: house };
     case "bookshelf":    return { w: 1, h: 2, solid: solid(1, 2), draw: bookshelf };
     case "pc":           return { w: 1, h: 2, solid: solid(1, 2), draw: pcDesk };
@@ -603,6 +705,9 @@ export function propArt(kind: string, opts: PropOpts = {}): PropArt {
     case "plant":        return { w: 1, h: 2, solid: solid(1, 2), draw: plant };
     case "server":       return { w: 1, h: 2, solid: solid(1, 2), draw: serverRack };
     case "kiosk":        return { w: 1, h: 2, solid: solid(1, 2), draw: (f) => kiosk(opts, f) };
+    case "cabinet":      return { w: 1, h: 2, solid: solid(1, 2), draw: () => cabinet(opts) };
+    case "telescope":    return { w: 2, h: 2, solid: solid(2, 2), draw: telescope };
+    case "portrait":     return { w: 1, h: 1, solid: ["#"], draw: () => portrait(opts) };
     case "plinth":       return { w: 1, h: 2, solid: solid(1, 2), draw: plinth };
     case "bed":          return { w: 1, h: 2, solid: solid(1, 2), draw: bed };
     case "tv":           return { w: 1, h: 2, solid: solid(1, 2), draw: tv };
